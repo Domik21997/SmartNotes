@@ -7,8 +7,13 @@ creating notifications. The first way will be by selecting a specific date and s
 
 <b>Features:</b>
 > File storage
+
 > SQLite
+
 > GPS
+
 > Push Up Notifications
+
 > Voice recording
+
 > Camera
