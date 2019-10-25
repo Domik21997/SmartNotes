@@ -6,15 +6,13 @@
     android:layout_height="match_parent"
     tools:context=".CreateNoteActivity">
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".CreateNoteActivity">
 
         <EditText
-            android:id="@+id/note_name"
+            android:id="@+id/noteNameEditView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -26,7 +24,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
-            android:id="@+id/note_text"
+            android:id="@+id/noteTextEditView"
             android:layout_width="0dp"
             android:layout_height="286dp"
             android:ems="10"
@@ -35,7 +33,17 @@
             android:inputType="textMultiLine"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/note_name" />
+            app:layout_constraintTop_toBottomOf="@+id/noteNameEditView" />
+
+        <TextView
+            android:id="@+id/alertTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="5dp"
+            android:textSize="18dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/noteTextEditView" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

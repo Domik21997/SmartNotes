@@ -28,6 +28,9 @@ public class MainActivity extends AppCompatActivity {
                 openCreateNoteActivity();
             }
         });
+
+        //TODO: remove test calls
+        this.openCreateNoteActivity();
     }
 
     @Override

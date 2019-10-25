@@ -17,7 +17,7 @@ public class SetColorDialog extends DialogFragment {
         LayoutInflater inflater = requireActivity().getLayoutInflater();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setView(inflater.inflate(R.layout.set_alert_dialog_layout, null))
+        builder.setView(inflater.inflate(R.layout.set_color_dialog_layout, null))
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
