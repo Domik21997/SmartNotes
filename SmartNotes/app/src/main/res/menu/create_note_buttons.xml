@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/set_color_button"
+        android:icon="@drawable/ic_format_color_fill_white_24dp"
+        android:title=""
+        android:onClick="setColorDialog"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/set_alert_button"
+        android:icon="@drawable/ic_add_alert_white_24dp"
+        android:title=""
+        android:onClick="setAlertDialog"
+        app:showAsAction="always" />
+</menu>
