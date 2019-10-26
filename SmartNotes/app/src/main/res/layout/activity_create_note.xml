@@ -12,12 +12,12 @@
         tools:context=".CreateNoteActivity">
 
         <EditText
-            android:id="@+id/noteNameEditView"
+            android:id="@+id/noteTitleEditView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:ems="10"
-            android:hint="Name"
+            android:hint="Title"
             android:inputType="textPersonName"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -33,7 +33,7 @@
             android:inputType="textMultiLine"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/noteNameEditView" />
+            app:layout_constraintTop_toBottomOf="@+id/noteTitleEditView" />
 
         <TextView
             android:id="@+id/alertTextView"

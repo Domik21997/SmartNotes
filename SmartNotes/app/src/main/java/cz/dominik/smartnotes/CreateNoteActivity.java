@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -103,6 +104,12 @@ public class CreateNoteActivity extends AppCompatActivity {
     }
 
     private void updateAlertTextLabel() {
+        if(calendar.before(Calendar.getInstance())) {
+            Snackbar.make(findViewById(R.id.add_note_fab), "The alert date cannot be set before the current date.", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show();
+            return;
+        }
+
         TextView alertTextView = findViewById(R.id.alertTextView);
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
