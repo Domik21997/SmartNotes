@@ -6,7 +6,7 @@
     android:weightSum="6">
 
     <Button
-        android:id="@+id/greyButton"
+        android:id="@+id/whiteButton"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:layout_margin="5dp"

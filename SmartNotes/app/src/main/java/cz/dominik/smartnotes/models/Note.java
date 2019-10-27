@@ -7,4 +7,5 @@ public class Note {
     public String text;
     public Date createdDate;
     public Date alertDate;
+    public int color;
 }

@@ -3,14 +3,10 @@ package cz.dominik.smartnotes;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.DatePicker;
 import android.widget.TextView;
-import android.widget.TimePicker;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -20,18 +16,24 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.function.Consumer;
+import java.util.function.IntConsumer;
 
+import cz.dominik.smartnotes.models.Note;
 import cz.dominik.smartnotes.models.NoteColor;
 
 public class CreateNoteActivity extends AppCompatActivity {
     final Calendar calendar = Calendar.getInstance();
 
+    Note note;
     NoteColor noteColor;
+    SimpleDateFormat sdf;
+    Consumer<Integer> setColorObservable;
+    int selectedColor;
 
     ConstraintLayout layout;
     TextView alertTextView;
     FloatingActionButton addNoteFab;
-    SimpleDateFormat sdf;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,8 +50,12 @@ public class CreateNoteActivity extends AppCompatActivity {
         addNoteFab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show());
 
+        selectedColor = noteColor.hexColorToInt(noteColor.white);
+        setColorObservable = (value) -> setBackgroundColor(value);
+        setBackgroundColor(selectedColor);
 
-        setBackgroundColor();
+        note = new Note();
+        note.color = selectedColor;
 
         //TODO: remove test calls
         this.setColorDialog(null);
@@ -63,7 +69,7 @@ public class CreateNoteActivity extends AppCompatActivity {
     }
 
     public void setColorDialog(MenuItem item) {
-        SetColorDialog setColorDialog = new SetColorDialog();
+        SetColorDialog setColorDialog = new SetColorDialog(noteColor, setColorObservable, (value) -> confirmSelection(value));
         setColorDialog.show(getSupportFragmentManager(), "color");
     }
 
@@ -114,8 +120,16 @@ public class CreateNoteActivity extends AppCompatActivity {
         alertTextView.setText("Alert: " + formatedAlertDate);
     }
 
-    private void setBackgroundColor() {
-        Log.d("behaviorsubject", "" + noteColor.hexColorToInt(noteColor.pink));
-        layout.setBackgroundColor(noteColor.hexColorToInt(noteColor.pink));
+    private void setBackgroundColor(int value) {
+        selectedColor = value;
+        layout.setBackgroundColor(value);
+    }
+
+    private void confirmSelection(boolean value) {
+        if(value) {
+            note.color = selectedColor;
+        } else {
+            setBackgroundColor(note.color);
+        }
     }
 }
