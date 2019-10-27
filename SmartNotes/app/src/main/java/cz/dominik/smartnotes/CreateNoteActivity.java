@@ -18,16 +18,13 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.function.Consumer;
-import java.util.function.IntConsumer;
 
 import cz.dominik.smartnotes.models.Note;
-import cz.dominik.smartnotes.models.NoteColor;
 
 public class CreateNoteActivity extends AppCompatActivity {
     final Calendar calendar = Calendar.getInstance();
 
     Note note;
-    NoteColor noteColor;
     SimpleDateFormat sdf;
     Consumer<Integer> setColorObservable;
     int selectedColor;
@@ -46,12 +43,11 @@ public class CreateNoteActivity extends AppCompatActivity {
         addNoteFab = findViewById(R.id.addNoteFab);
 
         sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-        noteColor = new NoteColor();
 
         addNoteFab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show());
 
-        selectedColor = noteColor.hexColorToInt(noteColor.white);
+        selectedColor = getColor(R.color.noteGrey);
         setColorObservable = (value) -> setBackgroundColor(value);
         setBackgroundColor(selectedColor);
 
@@ -70,7 +66,7 @@ public class CreateNoteActivity extends AppCompatActivity {
     }
 
     public void setColorDialog(MenuItem item) {
-        SetColorDialog setColorDialog = new SetColorDialog(noteColor, setColorObservable, (value) -> confirmSelection(value));
+        SetColorDialog setColorDialog = new SetColorDialog(setColorObservable, (value) -> confirmSelection(value));
         setColorDialog.show(getSupportFragmentManager(), "color");
     }
 

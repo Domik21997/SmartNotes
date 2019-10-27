@@ -12,19 +12,14 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import java.util.function.Consumer;
-import java.util.function.IntConsumer;
-
-import cz.dominik.smartnotes.models.NoteColor;
 
 public class SetColorDialog extends DialogFragment {
-    NoteColor noteColor;
     Consumer<Integer> setColorConsumer;
     Consumer<Boolean> confirmConsumer;
 
     LinearLayout layout;
 
-    public SetColorDialog(NoteColor noteColor, Consumer<Integer> setColorConsumer, Consumer<Boolean> confirmConsumer) {
-        this.noteColor = noteColor;
+    public SetColorDialog(Consumer<Integer> setColorConsumer, Consumer<Boolean> confirmConsumer) {
         this.setColorConsumer = setColorConsumer;
         this.confirmConsumer = confirmConsumer;
     }
@@ -45,12 +40,12 @@ public class SetColorDialog extends DialogFragment {
                     dialog.cancel();
                 });
 
-        layout.findViewById(R.id.whiteButton).setOnClickListener((View v) -> setColorConsumer.accept(noteColor.hexColorToInt(noteColor.white)));
-        layout.findViewById(R.id.blueButton).setOnClickListener((View v) -> setColorConsumer.accept(noteColor.hexColorToInt(noteColor.blue)));
-        layout.findViewById(R.id.greenButton).setOnClickListener((View v) -> setColorConsumer.accept(noteColor.hexColorToInt(noteColor.green)));
-        layout.findViewById(R.id.redButton).setOnClickListener((View v) -> setColorConsumer.accept(noteColor.hexColorToInt(noteColor.red)));
-        layout.findViewById(R.id.yellowButton).setOnClickListener((View v) -> setColorConsumer.accept(noteColor.hexColorToInt(noteColor.yellow)));
-        layout.findViewById(R.id.pinkButton).setOnClickListener((View v) -> setColorConsumer.accept(noteColor.hexColorToInt(noteColor.pink)));
+        layout.findViewById(R.id.greyButton).setOnClickListener((View v) -> setColorConsumer.accept(getContext().getColor(R.color.noteGrey)));
+        layout.findViewById(R.id.blueButton).setOnClickListener((View v) -> setColorConsumer.accept(getContext().getColor(R.color.noteBlue)));
+        layout.findViewById(R.id.greenButton).setOnClickListener((View v) -> setColorConsumer.accept(getContext().getColor(R.color.noteGreen)));
+        layout.findViewById(R.id.redButton).setOnClickListener((View v) -> setColorConsumer.accept(getContext().getColor(R.color.noteRed)));
+        layout.findViewById(R.id.yellowButton).setOnClickListener((View v) -> setColorConsumer.accept(getContext().getColor(R.color.noteYellow)));
+        layout.findViewById(R.id.pinkButton).setOnClickListener((View v) -> setColorConsumer.accept(getContext().getColor(R.color.notePink)));
 
         return builder.create();
     }
