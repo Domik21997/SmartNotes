@@ -16,6 +16,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.function.Consumer;
 import java.util.function.IntConsumer;
 
@@ -99,7 +100,7 @@ public class CreateNoteActivity extends AppCompatActivity {
                     //Log.d("behaviorsubject", hourOfDay + ":" + minute);
                     calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
                     calendar.set(Calendar.MINUTE, minute);
-                    updateAlertTextLabel();
+                    setAlert(calendar.getTime());
                 },
                 calendar.get(Calendar.HOUR_OF_DAY),
                 calendar.get(Calendar.MINUTE),
@@ -109,14 +110,19 @@ public class CreateNoteActivity extends AppCompatActivity {
         timePickerDialog.show();
     }
 
-    private void updateAlertTextLabel() {
-        if (calendar.before(Calendar.getInstance())) {
+    private void setAlert(Date date) {
+        if (date.before(Calendar.getInstance().getTime())) {
             Snackbar.make(addNoteFab, "The alert date cannot be set before the current date.", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
             return;
         }
 
-        String formatedAlertDate = sdf.format(calendar.getTime());
+        note.alertDate = date;
+        updateAlertTextLabel(date);
+    }
+
+    private void updateAlertTextLabel(Date date) {
+        String formatedAlertDate = sdf.format(date);
         alertTextView.setText("Alert: " + formatedAlertDate);
     }
 

@@ -43,6 +43,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="5dp"
             android:textSize="18dp"
+            android:textColor="#000000"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/noteTextEditView" />
 
