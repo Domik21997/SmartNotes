@@ -11,9 +11,9 @@ import android.view.View;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -21,27 +21,38 @@ import com.google.android.material.snackbar.Snackbar;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import cz.dominik.smartnotes.models.NoteColor;
+
 public class CreateNoteActivity extends AppCompatActivity {
     final Calendar calendar = Calendar.getInstance();
+
+    NoteColor noteColor;
+
+    ConstraintLayout layout;
+    TextView alertTextView;
+    FloatingActionButton addNoteFab;
+    SimpleDateFormat sdf;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_create_note);
 
-        FloatingActionButton fab = findViewById(R.id.add_note_fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        layout = findViewById(R.id.createNoteLayout);
+        alertTextView = findViewById(R.id.alertTextView);
+        addNoteFab = findViewById(R.id.addNoteFab);
 
+        sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+        noteColor = new NoteColor();
+
+        addNoteFab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show());
+
+
+        setBackgroundColor();
 
         //TODO: remove test calls
-        this.setAlertDialog(null);
+        this.setColorDialog(null);
     }
 
     @Override
@@ -57,25 +68,17 @@ public class CreateNoteActivity extends AppCompatActivity {
     }
 
     public void setAlertDialog(MenuItem item) {
-        /*
-        SetAlertDialog setAlertDialog = new SetAlertDialog();
-        setAlertDialog.show(getSupportFragmentManager(), "alert");
-         */
         openDatePickerDialog();
     }
 
-
     private void openDatePickerDialog() {
         DatePickerDialog datePickerDialog = new DatePickerDialog(this,
-                new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                        calendar.set(Calendar.YEAR, year);
-                        calendar.set(Calendar.MONTH, monthOfYear);
-                        calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                        //Log.d("behaviorsubject", year + " " + monthOfYear + " " + dayOfMonth);
-                        openTimePickerDialog();
-                    }
+                (view, year, monthOfYear, dayOfMonth) -> {
+                    calendar.set(Calendar.YEAR, year);
+                    calendar.set(Calendar.MONTH, monthOfYear);
+                    calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                    //Log.d("behaviorsubject", year + " " + monthOfYear + " " + dayOfMonth);
+                    openTimePickerDialog();
                 },
                 calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),
@@ -86,14 +89,11 @@ public class CreateNoteActivity extends AppCompatActivity {
 
     private void openTimePickerDialog() {
         TimePickerDialog timePickerDialog = new TimePickerDialog(this,
-                new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        //Log.d("behaviorsubject", hourOfDay + ":" + minute);
-                        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                        calendar.set(Calendar.MINUTE, minute);
-                        updateAlertTextLabel();
-                    }
+                (view, hourOfDay, minute) -> {
+                    //Log.d("behaviorsubject", hourOfDay + ":" + minute);
+                    calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                    calendar.set(Calendar.MINUTE, minute);
+                    updateAlertTextLabel();
                 },
                 calendar.get(Calendar.HOUR_OF_DAY),
                 calendar.get(Calendar.MINUTE),
@@ -104,16 +104,18 @@ public class CreateNoteActivity extends AppCompatActivity {
     }
 
     private void updateAlertTextLabel() {
-        if(calendar.before(Calendar.getInstance())) {
-            Snackbar.make(findViewById(R.id.add_note_fab), "The alert date cannot be set before the current date.", Snackbar.LENGTH_LONG)
+        if (calendar.before(Calendar.getInstance())) {
+            Snackbar.make(addNoteFab, "The alert date cannot be set before the current date.", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
             return;
         }
 
-        TextView alertTextView = findViewById(R.id.alertTextView);
-        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-
         String formatedAlertDate = sdf.format(calendar.getTime());
         alertTextView.setText("Alert: " + formatedAlertDate);
+    }
+
+    private void setBackgroundColor() {
+        Log.d("behaviorsubject", "" + noteColor.hexColorToInt(noteColor.pink));
+        layout.setBackgroundColor(noteColor.hexColorToInt(noteColor.pink));
     }
 }
