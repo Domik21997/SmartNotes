@@ -4,18 +4,18 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import cz.dominik.smartnotes.models.Constants;
 import cz.dominik.smartnotes.models.IDatabase;
 import cz.dominik.smartnotes.models.Note;
 
 public class LocalDatabase implements IDatabase {
     private Context context;
     private String databaseName;
-    private SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+    private SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_PATTERN_DATABASE);
 
     private String NoteTable = "Notes";
 

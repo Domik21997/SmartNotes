@@ -10,36 +10,44 @@ import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.arch.core.util.Function;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
+import cz.dominik.smartnotes.models.Constants;
 import cz.dominik.smartnotes.models.IDatabase;
 import cz.dominik.smartnotes.models.Note;
 
 public class MainActivity extends AppCompatActivity {
     IDatabase database;
+    SimpleDateFormat sdfDatabaseFormat = new SimpleDateFormat(Constants.DATE_PATTERN_DATABASE);
 
     ArrayList<Note> notes = new ArrayList<>();
     ArrayList<NoteView> noteViews = new ArrayList<>();
 
-    LinearLayout.LayoutParams rowLayoutParams;
     LinearLayout noteListLayout;
+    LinearLayout.LayoutParams rowLayoutParams;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         database = new LocalDatabase(this, "smartnotes");
         initRowLayoutParams();
 
-        notes.add(new Note("Poznámka 1 Poznámka 1 Poznámka 1 Poznámka 1 Poznámka 1 Poznámka 1 Poznámka 1", "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Fusce dui leo, imperdiet in, aliquam sit amet, feugiat eu, orci. Integer vulputate sem a nibh rutrum consequat", null, null, getColor(R.color.noteBlue)));
+        notes.add(new Note("Poznámka 1", "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Fusce dui leo, imperdiet in, aliquam sit amet, feugiat eu, orci. Integer vulputate sem a nibh rutrum consequat", null, null, getColor(R.color.noteBlue)));
         notes.add(new Note("Poznámka 2", "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Fusce dui leo, imperdiet in, aliquam sit amet, feugiat eu, orci. Integer vulputate sem a nibh rutrum consequat.", null, null, getColor(R.color.noteRed)));
         notes.add(new Note("Poznámka 3", "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Fusce dui leo, imperdiet in, aliquam sit amet, feugiat eu, orci. Integer vulputate sem a nibh rutrum consequat. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Fusce dui leo, imperdiet in, aliquam sit amet, feugiat eu, orci. Integer vulputate sem a nibh rutrum consequat.", null, null, getColor(R.color.noteGrey)));
         notes.add(new Note("Poznámka 4", "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Fusce dui leo, imperdiet in, aliquam sit amet, feugiat eu, orci. Integer vulputate sem a nibh rutrum consequat.", null, null, getColor(R.color.noteGreen)));
+        notes.add(new Note("Poznámka 4", "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Fusce dui leo, imperdiet in, aliquam sit amet, feugiat eu, orci. Integer vulputate sem a nibh rutrum consequat.", null, null, getColor(R.color.noteGreen)));
+        /*
         notes.add(new Note("Poznámka 5", "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Fusce dui leo, imperdiet in, aliquam sit amet, feugiat eu, orci. Integer vulputate sem a nibh rutrum consequat.", null, null, getColor(R.color.noteYellow)));
         notes.add(new Note("Poznámka 6", "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Fusce dui leo, imperdiet in, aliquam sit amet, feugiat eu, orci. Integer vulputate sem a nibh rutrum consequat.", null, null, getColor(R.color.notePink)));
+
 
         notes.add(new Note("Poznámka 5", "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Fusce dui leo, imperdiet in, aliquam sit amet, feugiat eu, orci. Integer vulputate sem a nibh rutrum consequat.", null, null, getColor(R.color.noteYellow)));
         notes.add(new Note("Poznámka 6", "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Fusce dui leo, imperdiet in, aliquam sit amet, feugiat eu, orci. Integer vulputate sem a nibh rutrum consequat.", null, null, getColor(R.color.notePink)));
@@ -49,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         notes.add(new Note("Poznámka 6", "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Fusce dui leo, imperdiet in, aliquam sit amet, feugiat eu, orci. Integer vulputate sem a nibh rutrum consequat.", null, null, getColor(R.color.notePink)));
         notes.add(new Note("Poznámka 5", "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Fusce dui leo, imperdiet in, aliquam sit amet, feugiat eu, orci. Integer vulputate sem a nibh rutrum consequat.", null, null, getColor(R.color.noteYellow)));
         notes.add(new Note("Poznámka 6", "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Fusce dui leo, imperdiet in, aliquam sit amet, feugiat eu, orci. Integer vulputate sem a nibh rutrum consequat.", null, null, getColor(R.color.notePink)));
-
+        */
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -59,10 +67,25 @@ public class MainActivity extends AppCompatActivity {
 
         noteListLayout = findViewById(R.id.verticalNoteLayout);
 
-        createNoteViews();
+        drawNoteViews();
+    }
 
-        //TODO: remove test calls
-        //this.openCreateNoteActivity();
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Note note = new Note();
+        note.title = data.getStringExtra("noteTitle");
+        note.text = data.getStringExtra("noteText");
+        try {
+            String alertDateString = data.getStringExtra("alertDate");
+            note.alertDate = alertDateString != null ? sdfDatabaseFormat.parse(data.getStringExtra("alertDate")) : null;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        note.createdDate = Calendar.getInstance().getTime();
+        note.color = data.getIntExtra("color", R.color.noteGrey);
+
+        notes.add(note);
+        drawNoteViews();
     }
 
     @Override
@@ -87,18 +110,15 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void addNote(View view) {
-        Log.d("behaviorsubject", "test");
-    }
 
     protected void openCreateNoteActivity() {
         Intent intent = new Intent(this, CreateNoteActivity.class);
-        startActivity(intent);
+
+        startActivityForResult(intent, 100);
     }
 
     public void addNote(Note note) {
         notes.add(note);
-
     }
 
     private void initRowLayoutParams() {
@@ -109,9 +129,10 @@ public class MainActivity extends AppCompatActivity {
         rowLayoutParams.rightMargin = 15;
     }
 
-    public void createNoteViews() {
+    public void drawNoteViews() {
+        noteListLayout.removeAllViews();
+
         int column = 1;
-        LinearLayout verticalLayout = findViewById(R.id.verticalNoteLayout);
         LinearLayout currentRow = null;
 
         for (Note note : notes) {
@@ -120,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
                 currentRow.setOrientation(LinearLayout.HORIZONTAL);
                 currentRow.setLayoutParams(rowLayoutParams);
                 currentRow.setWeightSum(2);
-                verticalLayout.addView(currentRow);
+                noteListLayout.addView(currentRow);
             }
 
             NoteView noteView = new NoteView(this, note);
@@ -132,5 +153,18 @@ public class MainActivity extends AppCompatActivity {
 
             column++;
         }
+
+        /*
+        //create gap if needed
+        if (notes.size() % 2 == 1) {
+            LinearLayout linearLayout = new LinearLayout(this);
+            linearLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    1
+            ));
+            currentRow.addView(linearLayout);
+        }
+        */
     }
 }

@@ -1,11 +1,14 @@
 package cz.dominik.smartnotes;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,16 +22,20 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.function.Consumer;
 
+import cz.dominik.smartnotes.models.Constants;
 import cz.dominik.smartnotes.models.Note;
 
 public class CreateNoteActivity extends AppCompatActivity {
     final Calendar calendar = Calendar.getInstance();
 
     Note note;
-    SimpleDateFormat sdf;
+    SimpleDateFormat sdfUserFormat;
+    SimpleDateFormat sdfDatabaseFormat;
     Consumer<Integer> setColorObservable;
     int selectedColor;
 
+    EditText noteTitleEditView;
+    EditText noteTextEditView;
     ConstraintLayout layout;
     TextView alertTextView;
     FloatingActionButton addNoteFab;
@@ -37,25 +44,48 @@ public class CreateNoteActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_note);
+        initializeView();
 
-        layout = findViewById(R.id.createNoteLayout);
-        alertTextView = findViewById(R.id.alertTextView);
-        addNoteFab = findViewById(R.id.addNoteFab);
+        sdfUserFormat = new SimpleDateFormat(Constants.DATE_PATTERN_USER);
+        sdfDatabaseFormat = new SimpleDateFormat(Constants.DATE_PATTERN_DATABASE);
 
-        sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-
-        addNoteFab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show());
-
+        note = new Note();
         selectedColor = getColor(R.color.noteGrey);
+        note.color = selectedColor;
         setColorObservable = (value) -> setBackgroundColor(value);
         setBackgroundColor(selectedColor);
 
-        note = new Note();
-        note.color = selectedColor;
+        addNoteFab.setOnClickListener(view -> {
+                    int a;
+                    String noteTitle = noteTitleEditView.getText().toString();
+                    String noteText = noteTextEditView.getText().toString();
 
-        //TODO: remove test calls
-        this.setColorDialog(null);
+                    if (noteTitle.isEmpty() && noteText.isEmpty()) {
+                        Snackbar.make(view, "The note has to have filled title or text.", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                        return;
+                    }
+
+                    Intent resultIntent = new Intent();
+                    resultIntent.putExtra("noteTitle", noteTitle);
+                    resultIntent.putExtra("noteText", noteText);
+                    String alertDateString = null;
+                    if (note.alertDate != null) {
+                        alertDateString = sdfDatabaseFormat.format(note.alertDate);
+                    }
+                    resultIntent.putExtra("alertDate", alertDateString);
+                    resultIntent.putExtra("color", note.color);
+                    setResult(Activity.RESULT_OK, resultIntent);
+                    finish();
+                }
+        );
+    }
+
+    private void initializeView() {
+        noteTitleEditView = findViewById(R.id.noteTitleEditView);
+        noteTextEditView = findViewById(R.id.noteTextEditView);
+        layout = findViewById(R.id.createNoteLayout);
+        alertTextView = findViewById(R.id.alertTextView);
+        addNoteFab = findViewById(R.id.addNoteFab);
     }
 
     @Override
@@ -118,7 +148,7 @@ public class CreateNoteActivity extends AppCompatActivity {
     }
 
     private void updateAlertTextLabel(Date date) {
-        String formatedAlertDate = sdf.format(date);
+        String formatedAlertDate = sdfUserFormat.format(date);
         alertTextView.setText("Alert: " + formatedAlertDate);
     }
 
@@ -128,7 +158,7 @@ public class CreateNoteActivity extends AppCompatActivity {
     }
 
     private void confirmSelection(boolean value) {
-        if(value) {
+        if (value) {
             note.color = selectedColor;
         } else {
             setBackgroundColor(note.color);

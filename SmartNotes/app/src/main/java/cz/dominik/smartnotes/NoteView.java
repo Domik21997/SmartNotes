@@ -34,7 +34,7 @@ public class NoteView {
 
     private LinearLayout.LayoutParams setUpParams() {
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 1
         );

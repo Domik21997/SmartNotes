@@ -11,7 +11,7 @@
         android:layout_height="50dp"
         android:layout_margin="5dp"
         android:layout_weight="1"
-        android:background="@drawable/round_button_white" />
+        android:background="@drawable/round_button_grey" />
 
     <Button
         android:id="@+id/blueButton"

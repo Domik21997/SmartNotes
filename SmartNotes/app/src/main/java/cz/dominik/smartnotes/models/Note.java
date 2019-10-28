@@ -1,13 +1,14 @@
 package cz.dominik.smartnotes.models;
 
+import java.util.Calendar;
 import java.util.Date;
 
 public class Note {
-    public long id;
+    public long id = -1;
 
     public String title;
     public String text;
-    public Date createdDate;
+    public Date createdDate = Calendar.getInstance().getTime();
     public Date alertDate;
     public int color;
 
