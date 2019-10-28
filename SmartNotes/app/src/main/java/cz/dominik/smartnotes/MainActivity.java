@@ -30,21 +30,20 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<Note> notes = new ArrayList<>();
     ArrayList<NoteView> noteViews = new ArrayList<>();
 
-    LinearLayout noteListLayout;
-    LinearLayout.LayoutParams rowLayoutParams;
+    LinearLayout firstColumn, secondColumn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         database = new LocalDatabase(this, "smartnotes");
-        initRowLayoutParams();
 
+        /*
         notes.add(new Note("Poznámka 1", "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Fusce dui leo, imperdiet in, aliquam sit amet, feugiat eu, orci. Integer vulputate sem a nibh rutrum consequat", null, null, getColor(R.color.noteBlue)));
         notes.add(new Note("Poznámka 2", "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Fusce dui leo, imperdiet in, aliquam sit amet, feugiat eu, orci. Integer vulputate sem a nibh rutrum consequat.", null, null, getColor(R.color.noteRed)));
         notes.add(new Note("Poznámka 3", "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Fusce dui leo, imperdiet in, aliquam sit amet, feugiat eu, orci. Integer vulputate sem a nibh rutrum consequat. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Fusce dui leo, imperdiet in, aliquam sit amet, feugiat eu, orci. Integer vulputate sem a nibh rutrum consequat.", null, null, getColor(R.color.noteGrey)));
         notes.add(new Note("Poznámka 4", "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Fusce dui leo, imperdiet in, aliquam sit amet, feugiat eu, orci. Integer vulputate sem a nibh rutrum consequat.", null, null, getColor(R.color.noteGreen)));
         notes.add(new Note("Poznámka 4", "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Fusce dui leo, imperdiet in, aliquam sit amet, feugiat eu, orci. Integer vulputate sem a nibh rutrum consequat.", null, null, getColor(R.color.noteGreen)));
-        /*
+
         notes.add(new Note("Poznámka 5", "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Fusce dui leo, imperdiet in, aliquam sit amet, feugiat eu, orci. Integer vulputate sem a nibh rutrum consequat.", null, null, getColor(R.color.noteYellow)));
         notes.add(new Note("Poznámka 6", "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Fusce dui leo, imperdiet in, aliquam sit amet, feugiat eu, orci. Integer vulputate sem a nibh rutrum consequat.", null, null, getColor(R.color.notePink)));
 
@@ -58,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
         notes.add(new Note("Poznámka 5", "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Fusce dui leo, imperdiet in, aliquam sit amet, feugiat eu, orci. Integer vulputate sem a nibh rutrum consequat.", null, null, getColor(R.color.noteYellow)));
         notes.add(new Note("Poznámka 6", "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Fusce dui leo, imperdiet in, aliquam sit amet, feugiat eu, orci. Integer vulputate sem a nibh rutrum consequat.", null, null, getColor(R.color.notePink)));
         */
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -65,8 +65,8 @@ public class MainActivity extends AppCompatActivity {
         FloatingActionButton fab = findViewById(R.id.open_create_note_fab);
         fab.setOnClickListener(view -> openCreateNoteActivity());
 
-        noteListLayout = findViewById(R.id.verticalNoteLayout);
-
+        firstColumn = findViewById(R.id.firstColumn);
+        secondColumn = findViewById(R.id.secondColumn);
         drawNoteViews();
     }
 
@@ -121,37 +121,17 @@ public class MainActivity extends AppCompatActivity {
         notes.add(note);
     }
 
-    private void initRowLayoutParams() {
-        rowLayoutParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        );
-        rowLayoutParams.rightMargin = 15;
-    }
-
     public void drawNoteViews() {
-        noteListLayout.removeAllViews();
+        LinearLayout[] columns = new LinearLayout[]{firstColumn, secondColumn};
 
-        int column = 1;
-        LinearLayout currentRow = null;
+        for (LinearLayout column : columns) {
+            column.removeAllViews();
+        }
 
-        for (Note note : notes) {
-            if (column == 1) {
-                currentRow = new LinearLayout(this);
-                currentRow.setOrientation(LinearLayout.HORIZONTAL);
-                currentRow.setLayoutParams(rowLayoutParams);
-                currentRow.setWeightSum(2);
-                noteListLayout.addView(currentRow);
-            }
-
-            NoteView noteView = new NoteView(this, note);
-            currentRow.addView(noteView.view);
+        for (int i = 0; i < notes.size(); i++) {
+            NoteView noteView = new NoteView(this, notes.get(i));
+            columns[i % 2].addView(noteView.view);
             noteViews.add(noteView);
-            if (column == 2) {
-                column = 0;
-            }
-
-            column++;
         }
 
         /*
