@@ -4,9 +4,11 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import cz.dominik.smartnotes.models.Constants;
 import cz.dominik.smartnotes.models.IDatabase;
@@ -17,14 +19,14 @@ public class LocalDatabase implements IDatabase {
     private String databaseName;
     private SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_PATTERN_DATABASE);
 
-    private String NoteTable = "Notes";
+    private String noteTable = "Notes";
 
     public LocalDatabase(Context context, String databaseName) {
         this.context = context;
         this.databaseName = databaseName;
 
         SQLiteDatabase db = context.openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null);
-        db.execSQL("CREATE TABLE IF NOT EXISTS " + NoteTable + "(title TEXT, text TEXT, createDate TEXT, alertDate TEXT, color INT);");
+        db.execSQL("CREATE TABLE IF NOT EXISTS " + noteTable + "(title TEXT, text TEXT, createdDate TEXT, alertDate TEXT, color INT);");
         db.close();
     }
 
@@ -32,20 +34,25 @@ public class LocalDatabase implements IDatabase {
         ArrayList<Note> notes = new ArrayList<>();
 
         SQLiteDatabase db = context.openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null);
-        Cursor cursor = db.rawQuery("SELECT * FROM " + NoteTable, null);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + noteTable, null);
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             Note note = new Note();
-            note.id = cursor.getLong(cursor.getColumnIndex("_id"));
+            //note.id = cursor.getLong(cursor.getColumnIndex("_id"));
             note.title = cursor.getString(cursor.getColumnIndex("title"));
             note.text = cursor.getString(cursor.getColumnIndex("text"));
             try {
-                note.createdDate = sdf.parse(cursor.getString(cursor.getColumnIndex("createdDate")));
+                String createdDateString = cursor.getString(cursor.getColumnIndex("createdDate"));
+                if (createdDateString != null) {
+                    note.createdDate = sdf.parse(createdDateString);
+                }
             } catch (ParseException e) {
                 note.createdDate = null;
             }
             try {
-                note.alertDate = sdf.parse(cursor.getString(cursor.getColumnIndex("alertDate")));
+                String alertDateString = cursor.getString(cursor.getColumnIndex("alertDate"));
+                if (alertDateString != null)
+                    note.alertDate = sdf.parse(alertDateString);
             } catch (ParseException e) {
                 note.alertDate = null;
             }
@@ -65,9 +72,10 @@ public class LocalDatabase implements IDatabase {
         ContentValues contentValues = new ContentValues();
         contentValues.put("title", note.title);
         contentValues.put("text", note.text);
-        contentValues.put("createdDate", sdf.format(note.createdDate));
-        contentValues.put("title", sdf.format(note.alertDate));
+        contentValues.put("createdDate", note.createdDate != null ? sdf.format(note.createdDate) : sdf.format(Calendar.getInstance().getTime()));
+        contentValues.put("alertDate", note.alertDate != null ? sdf.format(note.alertDate) : null);
         contentValues.put("color", note.color);
+        db.insert(noteTable, null, contentValues);
         db.close();
     }
 
@@ -75,7 +83,7 @@ public class LocalDatabase implements IDatabase {
         SQLiteDatabase db = context.openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null);
         String whereClause = "_id=?";
         String[] whereArgs = new String[]{String.valueOf(note)};
-        db.delete(NoteTable, whereClause, whereArgs);
+        db.delete(noteTable, whereClause, whereArgs);
         db.close();
     }
 

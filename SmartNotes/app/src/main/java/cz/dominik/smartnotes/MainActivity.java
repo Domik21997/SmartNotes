@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         database = new LocalDatabase(this, "smartnotes");
-
+        notes = database.getAllNotes();
         /*
         notes.add(new Note("Poznámka 1", "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Fusce dui leo, imperdiet in, aliquam sit amet, feugiat eu, orci. Integer vulputate sem a nibh rutrum consequat", null, null, getColor(R.color.noteBlue)));
         notes.add(new Note("Poznámka 2", "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Fusce dui leo, imperdiet in, aliquam sit amet, feugiat eu, orci. Integer vulputate sem a nibh rutrum consequat.", null, null, getColor(R.color.noteRed)));
@@ -108,7 +108,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void addNote(Note note) {
         notes.add(note);
+        database.insertNote(note);
         drawNoteViews();
+    }
+
+    public void removeNote(Note note) {
+        notes.remove(note);
     }
 
     public void drawNoteViews() {
