@@ -7,7 +7,7 @@
     android:padding="10dp">
 
     <TextView
-        android:id="@+id/noteTitleTextView"
+        android:id="@+id/note_title_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
@@ -16,7 +16,7 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/noteTextTextView"
+        android:id="@+id/note_text_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Text"

@@ -3,7 +3,6 @@ package cz.dominik.smartnotes;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -26,8 +25,8 @@ public class NoteView {
         drawable.setTint(note.color);
         view.setBackground(drawable);
 
-        noteTitleTextView = view.findViewById(R.id.noteTitleTextView);
-        noteTextTextView = view.findViewById(R.id.noteTextTextView);
+        noteTitleTextView = view.findViewById(R.id.note_title_text_view);
+        noteTextTextView = view.findViewById(R.id.note_text_text_view);
 
         setNoteValues();
     }

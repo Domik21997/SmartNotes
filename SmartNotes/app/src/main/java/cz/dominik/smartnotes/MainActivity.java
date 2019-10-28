@@ -2,15 +2,12 @@ package cz.dominik.smartnotes;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.arch.core.util.Function;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -65,8 +62,8 @@ public class MainActivity extends AppCompatActivity {
         FloatingActionButton fab = findViewById(R.id.open_create_note_fab);
         fab.setOnClickListener(view -> openCreateNoteActivity());
 
-        firstColumn = findViewById(R.id.firstColumn);
-        secondColumn = findViewById(R.id.secondColumn);
+        firstColumn = findViewById(R.id.first_column);
+        secondColumn = findViewById(R.id.second_column);
         drawNoteViews();
     }
 
@@ -83,26 +80,19 @@ public class MainActivity extends AppCompatActivity {
         }
         note.createdDate = Calendar.getInstance().getTime();
         note.color = data.getIntExtra("color", R.color.noteGrey);
-
-        notes.add(note);
-        drawNoteViews();
+        addNote(note);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
@@ -113,12 +103,12 @@ public class MainActivity extends AppCompatActivity {
 
     protected void openCreateNoteActivity() {
         Intent intent = new Intent(this, CreateNoteActivity.class);
-
         startActivityForResult(intent, 100);
     }
 
     public void addNote(Note note) {
         notes.add(note);
+        drawNoteViews();
     }
 
     public void drawNoteViews() {
@@ -133,18 +123,5 @@ public class MainActivity extends AppCompatActivity {
             columns[i % 2].addView(noteView.view);
             noteViews.add(noteView);
         }
-
-        /*
-        //create gap if needed
-        if (notes.size() % 2 == 1) {
-            LinearLayout linearLayout = new LinearLayout(this);
-            linearLayout.setLayoutParams(new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    1
-            ));
-            currentRow.addView(linearLayout);
-        }
-        */
     }
 }

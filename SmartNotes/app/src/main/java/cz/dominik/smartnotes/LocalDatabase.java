@@ -28,7 +28,7 @@ public class LocalDatabase implements IDatabase {
         db.close();
     }
 
-    public ArrayList<Note> GetAllNotes() {
+    public ArrayList<Note> getAllNotes() {
         ArrayList<Note> notes = new ArrayList<>();
 
         SQLiteDatabase db = context.openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null);
@@ -60,7 +60,7 @@ public class LocalDatabase implements IDatabase {
         return notes;
     }
 
-    public void InsertNote(Note note) {
+    public void insertNote(Note note) {
         SQLiteDatabase db = context.openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null);
         ContentValues contentValues = new ContentValues();
         contentValues.put("title", note.title);
@@ -71,7 +71,7 @@ public class LocalDatabase implements IDatabase {
         db.close();
     }
 
-    public void DeleteNote(Note note) {
+    public void deleteNote(Note note) {
         SQLiteDatabase db = context.openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null);
         String whereClause = "_id=?";
         String[] whereArgs = new String[]{String.valueOf(note)};

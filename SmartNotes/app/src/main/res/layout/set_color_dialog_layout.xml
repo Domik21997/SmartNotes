@@ -6,7 +6,7 @@
     android:weightSum="6">
 
     <Button
-        android:id="@+id/greyButton"
+        android:id="@+id/grey_button"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:layout_margin="5dp"
@@ -14,7 +14,7 @@
         android:background="@drawable/round_button_grey" />
 
     <Button
-        android:id="@+id/blueButton"
+        android:id="@+id/blue_button"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:layout_margin="5dp"
@@ -22,7 +22,7 @@
         android:background="@drawable/round_button_blue" />
 
     <Button
-        android:id="@+id/greenButton"
+        android:id="@+id/green_button"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:layout_margin="5dp"
@@ -30,7 +30,7 @@
         android:background="@drawable/round_button_green" />
 
     <Button
-        android:id="@+id/redButton"
+        android:id="@+id/red_button"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:layout_margin="5dp"
@@ -38,7 +38,7 @@
         android:background="@drawable/round_button_red" />
 
     <Button
-        android:id="@+id/yellowButton"
+        android:id="@+id/yellow_button"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:layout_margin="5dp"
@@ -46,7 +46,7 @@
         android:background="@drawable/round_button_yellow" />
 
     <Button
-        android:id="@+id/pinkButton"
+        android:id="@+id/pink_button"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:layout_margin="5dp"

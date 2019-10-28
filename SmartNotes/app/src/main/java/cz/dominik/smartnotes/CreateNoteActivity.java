@@ -81,11 +81,11 @@ public class CreateNoteActivity extends AppCompatActivity {
     }
 
     private void initializeView() {
-        noteTitleEditView = findViewById(R.id.noteTitleEditView);
-        noteTextEditView = findViewById(R.id.noteTextEditView);
-        layout = findViewById(R.id.createNoteLayout);
-        alertTextView = findViewById(R.id.alertTextView);
-        addNoteFab = findViewById(R.id.addNoteFab);
+        noteTitleEditView = findViewById(R.id.note_title_edit_view);
+        noteTextEditView = findViewById(R.id.note_text_edit_view);
+        layout = findViewById(R.id.create_note_layout);
+        alertTextView = findViewById(R.id.alert_text_view);
+        addNoteFab = findViewById(R.id.add_note_fab);
     }
 
     @Override

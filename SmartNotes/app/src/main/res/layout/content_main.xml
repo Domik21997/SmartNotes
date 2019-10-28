@@ -24,14 +24,14 @@
             android:weightSum="2">
 
             <LinearLayout
-                android:id="@+id/firstColumn"
+                android:id="@+id/first_column"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical"></LinearLayout>
 
             <LinearLayout
-                android:id="@+id/secondColumn"
+                android:id="@+id/second_column"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
