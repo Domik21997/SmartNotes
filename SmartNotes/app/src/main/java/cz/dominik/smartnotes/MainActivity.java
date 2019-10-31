@@ -11,7 +11,6 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -25,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     SimpleDateFormat sdfDatabaseFormat = new SimpleDateFormat(Constants.DATE_PATTERN_DATABASE);
 
     ArrayList<Note> notes = new ArrayList<>();
-    ArrayList<NoteView> noteViews = new ArrayList<>();
+    ArrayList<NoteTale> noteTales = new ArrayList<>();
 
     LinearLayout firstColumn, secondColumn;
 
@@ -102,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     protected void openCreateNoteActivity() {
-        Intent intent = new Intent(this, CreateNoteActivity.class);
+        Intent intent = new Intent(this, NoteActivity.class);
         startActivityForResult(intent, 100);
     }
 
@@ -124,9 +123,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         for (int i = 0; i < notes.size(); i++) {
-            NoteView noteView = new NoteView(this, notes.get(i));
-            columns[i % 2].addView(noteView.view);
-            noteViews.add(noteView);
+            NoteTale noteTale = new NoteTale(this, notes.get(i));
+            columns[i % 2].addView(noteTale.view);
+            noteTales.add(noteTale);
         }
     }
 }

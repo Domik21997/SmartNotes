@@ -8,27 +8,31 @@ import android.widget.TextView;
 
 import cz.dominik.smartnotes.models.Note;
 
-public class NoteView {
+public class NoteTale {
     View view;
     Note note;
 
     TextView noteTitleTextView;
     TextView noteTextTextView;
 
-    public NoteView(Context context, Note note) {
+    public NoteTale(Context context, Note note) {
         this.note = note;
+        initializeLayout(context);
+        initializeViews();
+        setNoteValues();
+    }
 
+    private void initializeLayout(Context context) {
         view = LinearLayout.inflate(context, R.layout.note, null);
         view.setLayoutParams(setUpParams());
-        //view.setBackgroundColor(note.color);
         Drawable drawable = context.getDrawable(R.drawable.note_border);
         drawable.setTint(note.color);
         view.setBackground(drawable);
+    }
 
+    private void initializeViews() {
         noteTitleTextView = view.findViewById(R.id.note_title_text_view);
         noteTextTextView = view.findViewById(R.id.note_text_text_view);
-
-        setNoteValues();
     }
 
     private LinearLayout.LayoutParams setUpParams() {

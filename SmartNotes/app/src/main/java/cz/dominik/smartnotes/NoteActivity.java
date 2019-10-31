@@ -25,15 +25,15 @@ import java.util.function.Consumer;
 import cz.dominik.smartnotes.models.Constants;
 import cz.dominik.smartnotes.models.Note;
 
-public class CreateNoteActivity extends AppCompatActivity {
+public class NoteActivity extends AppCompatActivity {
     final Calendar calendar = Calendar.getInstance();
-
     Note note;
-    SimpleDateFormat sdfUserFormat;
-    SimpleDateFormat sdfDatabaseFormat;
+    SimpleDateFormat sdfUserFormat = new SimpleDateFormat(Constants.DATE_PATTERN_USER);
+    SimpleDateFormat sdfDatabaseFormat = new SimpleDateFormat(Constants.DATE_PATTERN_DATABASE);
     Consumer<Integer> setColorObservable;
     int selectedColor;
 
+    //views
     EditText noteTitleEditView;
     EditText noteTextEditView;
     ConstraintLayout layout;
@@ -43,18 +43,49 @@ public class CreateNoteActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_note);
-        initializeView();
+        setContentView(R.layout.activity_note);
+        initializeViews();
+        initializeNoteData();
+        bindAddNoteFabOnClickListener();
+    }
 
-        sdfUserFormat = new SimpleDateFormat(Constants.DATE_PATTERN_USER);
-        sdfDatabaseFormat = new SimpleDateFormat(Constants.DATE_PATTERN_DATABASE);
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.create_note_buttons, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
 
+    private void initializeViews() {
+        noteTitleEditView = findViewById(R.id.note_title_edit_view);
+        noteTextEditView = findViewById(R.id.note_text_edit_view);
+        layout = findViewById(R.id.create_note_layout);
+        alertTextView = findViewById(R.id.alert_text_view);
+        addNoteFab = findViewById(R.id.add_note_fab);
+    }
+
+    private void initializeNoteData() {
+        Intent intent = getIntent();
         note = new Note();
-        selectedColor = getColor(R.color.noteGrey);
-        note.color = selectedColor;
+
+        try {
+            note.id = intent.getIntExtra("id", -1);
+            note.createdDate = sdfDatabaseFormat.parse(intent.getStringExtra("createdDate"));
+            note.alertDate = sdfDatabaseFormat.parse(intent.getStringExtra("alertDate"));
+            note.title = intent.getStringExtra("title");
+            note.text = intent.getStringExtra("text");
+            note.color = intent.getIntExtra("color", 0);
+
+        } catch (Exception e) {
+            selectedColor = getColor(R.color.noteGrey);
+            note.color = selectedColor;
+        }
+
         setColorObservable = (value) -> setBackgroundColor(value);
         setBackgroundColor(selectedColor);
+    }
 
+    private void bindAddNoteFabOnClickListener() {
         addNoteFab.setOnClickListener(view -> {
                     int a;
                     String noteTitle = noteTitleEditView.getText().toString();
@@ -78,21 +109,6 @@ public class CreateNoteActivity extends AppCompatActivity {
                     finish();
                 }
         );
-    }
-
-    private void initializeView() {
-        noteTitleEditView = findViewById(R.id.note_title_edit_view);
-        noteTextEditView = findViewById(R.id.note_text_edit_view);
-        layout = findViewById(R.id.create_note_layout);
-        alertTextView = findViewById(R.id.alert_text_view);
-        addNoteFab = findViewById(R.id.add_note_fab);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.create_note_buttons, menu);
-        return super.onCreateOptionsMenu(menu);
     }
 
     public void setColorDialog(MenuItem item) {

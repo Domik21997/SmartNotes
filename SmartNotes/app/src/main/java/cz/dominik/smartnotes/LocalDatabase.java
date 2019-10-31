@@ -24,7 +24,10 @@ public class LocalDatabase implements IDatabase {
     public LocalDatabase(Context context, String databaseName) {
         this.context = context;
         this.databaseName = databaseName;
+        this.initializeDatabase();
+    }
 
+    private void initializeDatabase() {
         SQLiteDatabase db = context.openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null);
         db.execSQL("CREATE TABLE IF NOT EXISTS " + noteTable + "(title TEXT, text TEXT, createdDate TEXT, alertDate TEXT, color INT);");
         db.close();
