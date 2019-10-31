@@ -2,6 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/delete_note_menu_item"
+        android:icon="@drawable/ic_delete_white_24dp"
+        android:title=""
+        android:visible="false"
+        android:onClick="deleteNote"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/set_color_button"
         android:icon="@drawable/ic_format_color_fill_white_24dp"
         android:title=""

@@ -37,11 +37,11 @@ public class LocalDatabase implements IDatabase {
         ArrayList<Note> notes = new ArrayList<>();
 
         SQLiteDatabase db = context.openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null);
-        Cursor cursor = db.rawQuery("SELECT * FROM " + noteTable, null);
+        Cursor cursor = db.rawQuery("SELECT rowid _id, * FROM " + noteTable, null);
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             Note note = new Note();
-            //note.id = cursor.getLong(cursor.getColumnIndex("_id"));
+            note.id = cursor.getLong(cursor.getColumnIndex("_id"));
             note.title = cursor.getString(cursor.getColumnIndex("title"));
             note.text = cursor.getString(cursor.getColumnIndex("text"));
             try {
