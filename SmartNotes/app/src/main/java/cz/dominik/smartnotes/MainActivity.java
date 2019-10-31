@@ -69,18 +69,18 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Note note = new Note();
-        note.title = data.getStringExtra("noteTitle");
-        note.text = data.getStringExtra("noteText");
         try {
+            Note note = new Note();
+            note.title = data.getStringExtra("noteTitle");
+            note.text = data.getStringExtra("noteText");
             String alertDateString = data.getStringExtra("alertDate");
             note.alertDate = alertDateString != null ? sdfDatabaseFormat.parse(data.getStringExtra("alertDate")) : null;
-        } catch (ParseException e) {
-            e.printStackTrace();
+            note.createdDate = Calendar.getInstance().getTime();
+            note.color = data.getIntExtra("color", R.color.noteGrey);
+            addNote(note);
+        } catch (Exception e) {
+
         }
-        note.createdDate = Calendar.getInstance().getTime();
-        note.color = data.getIntExtra("color", R.color.noteGrey);
-        addNote(note);
     }
 
     @Override

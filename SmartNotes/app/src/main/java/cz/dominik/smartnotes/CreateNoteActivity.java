@@ -61,7 +61,7 @@ public class CreateNoteActivity extends AppCompatActivity {
                     String noteText = noteTextEditView.getText().toString();
 
                     if (noteTitle.isEmpty() && noteText.isEmpty()) {
-                        Snackbar.make(view, "The note has to have filled title or text.", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                        Snackbar.make(view, "Note is empty.", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                         return;
                     }
 
