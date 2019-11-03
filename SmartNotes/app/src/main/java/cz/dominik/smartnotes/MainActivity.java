@@ -14,6 +14,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import cz.dominik.smartnotes.models.Constants;
 import cz.dominik.smartnotes.models.IDatabase;
@@ -69,14 +71,22 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         try {
-            Note note = new Note();
-            note.title = data.getStringExtra("noteTitle");
-            note.text = data.getStringExtra("noteText");
-            String alertDateString = data.getStringExtra("alertDate");
-            note.alertDate = alertDateString != null ? sdfDatabaseFormat.parse(data.getStringExtra("alertDate")) : null;
-            note.createdDate = Calendar.getInstance().getTime();
-            note.color = data.getIntExtra("color", R.color.noteGrey);
-            addNote(note);
+            long noteIdToDelete = data.getLongExtra("noteIdToDelete", 0);
+            //deleting note
+            if (noteIdToDelete != 0) {
+                database.deleteNote(noteIdToDelete);
+                deleteNote(noteIdToDelete);
+            //adding note
+            } else {
+                Note note = new Note();
+                note.title = data.getStringExtra("noteTitle");
+                note.text = data.getStringExtra("noteText");
+                String alertDateString = data.getStringExtra("alertDate");
+                note.alertDate = alertDateString != null ? sdfDatabaseFormat.parse(data.getStringExtra("alertDate")) : null;
+                note.createdDate = Calendar.getInstance().getTime();
+                note.color = data.getIntExtra("color", R.color.noteGrey);
+                addNote(note);
+            }
         } catch (Exception e) {
 
         }
@@ -106,13 +116,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void addNote(Note note) {
-        notes.add(note);
-        database.insertNote(note);
+        Note newNote = database.insertNote(note);
+        notes.add(newNote);
         drawNoteViews();
     }
 
-    public void removeNote(Note note) {
-        notes.remove(note);
+    public void deleteNote(long noteId) {
+        notes = (ArrayList<Note>) notes
+                .stream()
+                .filter(n -> n.id != noteId)
+                .collect(Collectors.toList());
+        drawNoteViews();
     }
 
     public void drawNoteViews() {

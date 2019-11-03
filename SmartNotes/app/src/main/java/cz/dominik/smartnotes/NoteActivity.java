@@ -105,7 +105,6 @@ public class NoteActivity extends AppCompatActivity {
 
     private void bindAddNoteFabOnClickListener() {
         fabButton.setOnClickListener(view -> {
-                    int a;
                     String noteTitle = noteTitleEditView.getText().toString();
                     String noteText = noteTextEditView.getText().toString();
 
@@ -201,6 +200,9 @@ public class NoteActivity extends AppCompatActivity {
     }
 
     public void deleteNote(MenuItem item) {
-
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra("noteIdToDelete", note.id);
+        setResult(Activity.RESULT_OK, resultIntent);
+        finish();
     }
 }

@@ -3,7 +3,8 @@ package cz.dominik.smartnotes.models;
 import java.util.ArrayList;
 
 public interface IDatabase {
+    Note getById(long noteId);
     ArrayList<Note> getAllNotes();
-    void insertNote(Note note);
-    void deleteNote(Note note);
+    Note insertNote(Note note);
+    void deleteNote(long noteId);
 }

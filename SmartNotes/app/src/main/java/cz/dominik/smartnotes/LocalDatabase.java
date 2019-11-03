@@ -19,7 +19,7 @@ public class LocalDatabase implements IDatabase {
     private String databaseName;
     private SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_PATTERN_DATABASE);
 
-    private String noteTable = "Notes";
+    public static final String noteTable = "Notes";
 
     public LocalDatabase(Context context, String databaseName) {
         this.context = context;
@@ -31,6 +31,36 @@ public class LocalDatabase implements IDatabase {
         SQLiteDatabase db = context.openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null);
         db.execSQL("CREATE TABLE IF NOT EXISTS " + noteTable + "(title TEXT, text TEXT, createdDate TEXT, alertDate TEXT, color INT);");
         db.close();
+    }
+
+    public Note getById(long noteId) {
+        SQLiteDatabase db = context.openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null);
+        Cursor cursor = db.rawQuery("SELECT rowid _id, * FROM " + noteTable + " WHERE _id=" + noteId, null);
+        cursor.moveToFirst();
+        Note note = new Note();
+        note.id = cursor.getLong(cursor.getColumnIndex("_id"));
+        note.title = cursor.getString(cursor.getColumnIndex("title"));
+        note.text = cursor.getString(cursor.getColumnIndex("text"));
+        try {
+            String createdDateString = cursor.getString(cursor.getColumnIndex("createdDate"));
+            if (createdDateString != null) {
+                note.createdDate = sdf.parse(createdDateString);
+            }
+        } catch (ParseException e) {
+            note.createdDate = null;
+        }
+        try {
+            String alertDateString = cursor.getString(cursor.getColumnIndex("alertDate"));
+            if (alertDateString != null)
+                note.alertDate = sdf.parse(alertDateString);
+        } catch (ParseException e) {
+            note.alertDate = null;
+        }
+        note.color = cursor.getInt(cursor.getColumnIndex("color"));
+        cursor.close();
+        db.close();
+
+        return note;
     }
 
     public ArrayList<Note> getAllNotes() {
@@ -70,7 +100,7 @@ public class LocalDatabase implements IDatabase {
         return notes;
     }
 
-    public void insertNote(Note note) {
+    public Note insertNote(Note note) {
         SQLiteDatabase db = context.openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null);
         ContentValues contentValues = new ContentValues();
         contentValues.put("title", note.title);
@@ -78,17 +108,15 @@ public class LocalDatabase implements IDatabase {
         contentValues.put("createdDate", note.createdDate != null ? sdf.format(note.createdDate) : sdf.format(Calendar.getInstance().getTime()));
         contentValues.put("alertDate", note.alertDate != null ? sdf.format(note.alertDate) : null);
         contentValues.put("color", note.color);
-        db.insert(noteTable, null, contentValues);
+        long newNoteId = db.insert(noteTable, null, contentValues);
         db.close();
+
+        return getById(newNoteId);
     }
 
-    public void deleteNote(Note note) {
+    public void deleteNote(long noteId) {
         SQLiteDatabase db = context.openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null);
-        String whereClause = "_id=?";
-        String[] whereArgs = new String[]{String.valueOf(note)};
-        db.delete(noteTable, whereClause, whereArgs);
+        db.delete(noteTable, "_id=?", new String[]{noteId + ""});
         db.close();
     }
-
-
 }
