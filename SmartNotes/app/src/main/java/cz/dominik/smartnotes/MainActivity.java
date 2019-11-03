@@ -1,9 +1,11 @@
 package cz.dominik.smartnotes;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,7 +16,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import cz.dominik.smartnotes.models.Constants;
@@ -61,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = findViewById(R.id.open_create_note_fab);
-        fab.setOnClickListener(view -> openCreateNoteActivity());
+        fab.setOnClickListener(view -> openNoteActivity());
 
         firstColumn = findViewById(R.id.first_column);
         secondColumn = findViewById(R.id.second_column);
@@ -71,13 +73,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         try {
-            long noteIdToDelete = data.getLongExtra("noteIdToDelete", 0);
-            //deleting note
-            if (noteIdToDelete != 0) {
-                database.deleteNote(noteIdToDelete);
-                deleteNote(noteIdToDelete);
             //adding note
-            } else {
+            if(requestCode == 100) {
                 Note note = new Note();
                 note.title = data.getStringExtra("noteTitle");
                 note.text = data.getStringExtra("noteText");
@@ -86,6 +83,16 @@ public class MainActivity extends AppCompatActivity {
                 note.createdDate = Calendar.getInstance().getTime();
                 note.color = data.getIntExtra("color", R.color.noteGrey);
                 addNote(note);
+            } else if(requestCode == 200) {
+                long noteIdToDelete = data.getLongExtra("noteIdToDelete", 0);
+                //deleting note
+                if (noteIdToDelete != 0) {
+                    database.deleteNote(noteIdToDelete);
+                    deleteNote(noteIdToDelete);
+                //editing note
+                } else {
+
+                }
             }
         } catch (Exception e) {
 
@@ -110,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    protected void openCreateNoteActivity() {
+    protected void openNoteActivity() {
         Intent intent = new Intent(this, NoteActivity.class);
         startActivityForResult(intent, 100);
     }
@@ -139,6 +146,17 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < notes.size(); i++) {
             NoteTale noteTale = new NoteTale(this, notes.get(i));
             columns[i % 2].addView(noteTale.view);
+            final Intent intent = new Intent(this, NoteActivity.class);
+            noteTale.view.setOnClickListener(v -> {
+                intent.putExtra("id", noteTale.note.id);
+                intent.putExtra("createdDate", sdfDatabaseFormat.format(noteTale.note.createdDate));
+                intent.putExtra("alertDate", noteTale.note.alertDate != null ? sdfDatabaseFormat.format(noteTale.note.alertDate) : null);
+                intent.putExtra("title", noteTale.note.title);
+                intent.putExtra("text", noteTale.note.text);
+                intent.putExtra("color", noteTale.note.color);
+
+                startActivityForResult(intent, 200);
+            });
             noteTales.add(noteTale);
         }
     }

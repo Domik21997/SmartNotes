@@ -28,21 +28,6 @@ public class NoteTale {
         initializeLayout(context);
         initializeViews();
         setNoteValues();
-        bindOnNoteClickListener();
-    }
-
-    private void bindOnNoteClickListener() {
-        view.setOnClickListener(v -> {
-            Intent intent = new Intent(context, NoteActivity.class);
-            intent.putExtra("id", note.id);
-            intent.putExtra("createdDate", sdfDatabaseFormat.format(this.note.createdDate));
-            intent.putExtra("alertDate", this.note.alertDate != null ? sdfDatabaseFormat.format(this.note.alertDate) : null);
-            intent.putExtra("title", note.title);
-            intent.putExtra("text", note.text);
-            intent.putExtra("color", note.color);
-
-            context.startActivity(intent);
-        });
     }
 
     private void initializeLayout(Context context) {

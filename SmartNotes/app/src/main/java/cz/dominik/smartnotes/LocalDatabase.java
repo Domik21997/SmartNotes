@@ -19,7 +19,7 @@ public class LocalDatabase implements IDatabase {
     private String databaseName;
     private SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_PATTERN_DATABASE);
 
-    public static final String noteTable = "Notes";
+    public static final String NOTE_TABLE = "Notes";
 
     public LocalDatabase(Context context, String databaseName) {
         this.context = context;
@@ -29,13 +29,13 @@ public class LocalDatabase implements IDatabase {
 
     private void initializeDatabase() {
         SQLiteDatabase db = context.openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null);
-        db.execSQL("CREATE TABLE IF NOT EXISTS " + noteTable + "(title TEXT, text TEXT, createdDate TEXT, alertDate TEXT, color INT);");
+        db.execSQL("CREATE TABLE IF NOT EXISTS " + NOTE_TABLE + "(title TEXT, text TEXT, createdDate TEXT, alertDate TEXT, color INT);");
         db.close();
     }
 
     public Note getById(long noteId) {
         SQLiteDatabase db = context.openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null);
-        Cursor cursor = db.rawQuery("SELECT rowid _id, * FROM " + noteTable + " WHERE _id=" + noteId, null);
+        Cursor cursor = db.rawQuery("SELECT rowid _id, * FROM " + NOTE_TABLE + " WHERE _id=" + noteId, null);
         cursor.moveToFirst();
         Note note = new Note();
         note.id = cursor.getLong(cursor.getColumnIndex("_id"));
@@ -67,7 +67,7 @@ public class LocalDatabase implements IDatabase {
         ArrayList<Note> notes = new ArrayList<>();
 
         SQLiteDatabase db = context.openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null);
-        Cursor cursor = db.rawQuery("SELECT rowid _id, * FROM " + noteTable, null);
+        Cursor cursor = db.rawQuery("SELECT rowid _id, * FROM " + NOTE_TABLE, null);
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             Note note = new Note();
@@ -108,7 +108,7 @@ public class LocalDatabase implements IDatabase {
         contentValues.put("createdDate", note.createdDate != null ? sdf.format(note.createdDate) : sdf.format(Calendar.getInstance().getTime()));
         contentValues.put("alertDate", note.alertDate != null ? sdf.format(note.alertDate) : null);
         contentValues.put("color", note.color);
-        long newNoteId = db.insert(noteTable, null, contentValues);
+        long newNoteId = db.insert(NOTE_TABLE, null, contentValues);
         db.close();
 
         return getById(newNoteId);
@@ -116,7 +116,7 @@ public class LocalDatabase implements IDatabase {
 
     public void deleteNote(long noteId) {
         SQLiteDatabase db = context.openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null);
-        db.delete(noteTable, "_id=?", new String[]{noteId + ""});
+        db.delete(NOTE_TABLE, "rowid = ?", new String[]{noteId + ""});
         db.close();
     }
 }
