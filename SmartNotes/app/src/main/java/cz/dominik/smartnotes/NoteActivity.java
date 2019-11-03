@@ -47,7 +47,7 @@ public class NoteActivity extends AppCompatActivity {
         setContentView(R.layout.activity_note);
         initializeViews();
         initializeNoteData();
-        bindAddNoteFabOnClickListener();
+        bindFabButtonOnClickListener();
     }
 
     @Override
@@ -103,7 +103,7 @@ public class NoteActivity extends AppCompatActivity {
             updateAlertTextLabel(note.alertDate);
     }
 
-    private void bindAddNoteFabOnClickListener() {
+    private void bindFabButtonOnClickListener() {
         fabButton.setOnClickListener(view -> {
                     String noteTitle = noteTitleEditView.getText().toString();
                     String noteText = noteTextEditView.getText().toString();
@@ -114,6 +114,7 @@ public class NoteActivity extends AppCompatActivity {
                     }
 
                     Intent resultIntent = new Intent();
+                    resultIntent.putExtra("noteId", note.id);
                     resultIntent.putExtra("noteTitle", noteTitle);
                     resultIntent.putExtra("noteText", noteText);
                     String alertDateString = null;

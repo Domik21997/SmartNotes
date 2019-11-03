@@ -6,5 +6,6 @@ public interface IDatabase {
     Note getById(long noteId);
     ArrayList<Note> getAllNotes();
     Note insertNote(Note note);
+    void updateNote(Note note);
     void deleteNote(long noteId);
 }

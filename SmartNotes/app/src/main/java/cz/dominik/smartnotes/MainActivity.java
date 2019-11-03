@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         try {
             //adding note
-            if(requestCode == 100) {
+            if (requestCode == 100) {
                 Note note = new Note();
                 note.title = data.getStringExtra("noteTitle");
                 note.text = data.getStringExtra("noteText");
@@ -83,15 +83,24 @@ public class MainActivity extends AppCompatActivity {
                 note.createdDate = Calendar.getInstance().getTime();
                 note.color = data.getIntExtra("color", R.color.noteGrey);
                 addNote(note);
-            } else if(requestCode == 200) {
+            } else if (requestCode == 200) {
                 long noteIdToDelete = data.getLongExtra("noteIdToDelete", 0);
                 //deleting note
                 if (noteIdToDelete != 0) {
                     database.deleteNote(noteIdToDelete);
                     deleteNote(noteIdToDelete);
-                //editing note
+                    //editing note
                 } else {
-
+                    Note note = new Note();
+                    note.id = data.getLongExtra("noteId", 0);
+                    if (note.id == 0)
+                        return;
+                    note.title = data.getStringExtra("noteTitle");
+                    note.text = data.getStringExtra("noteText");
+                    String alertDateString = data.getStringExtra("alertDate");
+                    note.alertDate = alertDateString != null ? sdfDatabaseFormat.parse(data.getStringExtra("alertDate")) : null;
+                    note.color = data.getIntExtra("color", R.color.noteGrey);
+                    updateNote(note);
                 }
             }
         } catch (Exception e) {
@@ -134,6 +143,23 @@ public class MainActivity extends AppCompatActivity {
                 .filter(n -> n.id != noteId)
                 .collect(Collectors.toList());
         drawNoteViews();
+    }
+
+    public void updateNote(Note updatedNote) {
+        try {
+            Note updatingNote = notes
+                    .stream()
+                    .filter(n -> n.id == updatedNote.id)
+                    .findFirst()
+                    .orElse(null);
+
+            int updatingIndex = notes.indexOf(updatingNote);
+            database.updateNote(updatedNote);
+            notes.set(updatingIndex, updatedNote);
+            drawNoteViews();
+        } catch (Exception e) {
+
+        }
     }
 
     public void drawNoteViews() {

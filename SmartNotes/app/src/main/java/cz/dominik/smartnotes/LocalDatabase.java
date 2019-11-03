@@ -114,6 +114,18 @@ public class LocalDatabase implements IDatabase {
         return getById(newNoteId);
     }
 
+    public void updateNote(Note note) {
+        SQLiteDatabase db = context.openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null);
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("title", note.title);
+        contentValues.put("text", note.text);
+        contentValues.put("createdDate", note.createdDate != null ? sdf.format(note.createdDate) : sdf.format(Calendar.getInstance().getTime()));
+        contentValues.put("alertDate", note.alertDate != null ? sdf.format(note.alertDate) : null);
+        contentValues.put("color", note.color);
+        db.update(NOTE_TABLE, contentValues, "rowid=" + note.id, null);
+        db.close();
+    }
+
     public void deleteNote(long noteId) {
         SQLiteDatabase db = context.openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null);
         db.delete(NOTE_TABLE, "rowid = ?", new String[]{noteId + ""});
