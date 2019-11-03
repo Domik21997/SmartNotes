@@ -1,12 +1,17 @@
 package cz.dominik.smartnotes;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -87,7 +92,6 @@ public class MainActivity extends AppCompatActivity {
                 long noteIdToDelete = data.getLongExtra("noteIdToDelete", 0);
                 //deleting note
                 if (noteIdToDelete != 0) {
-                    database.deleteNote(noteIdToDelete);
                     deleteNote(noteIdToDelete);
                     //editing note
                 } else {
@@ -138,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void deleteNote(long noteId) {
+        database.deleteNote(noteId);
         notes = (ArrayList<Note>) notes
                 .stream()
                 .filter(n -> n.id != noteId)
@@ -173,6 +178,7 @@ public class MainActivity extends AppCompatActivity {
             NoteTale noteTale = new NoteTale(this, notes.get(i));
             columns[i % 2].addView(noteTale.view);
             final Intent intent = new Intent(this, NoteActivity.class);
+            //on click listener
             noteTale.view.setOnClickListener(v -> {
                 intent.putExtra("id", noteTale.note.id);
                 intent.putExtra("createdDate", sdfDatabaseFormat.format(noteTale.note.createdDate));
@@ -183,6 +189,21 @@ public class MainActivity extends AppCompatActivity {
 
                 startActivityForResult(intent, 200);
             });
+
+            //gestures
+            noteTale.view.setOnLongClickListener(v -> {
+                new AlertDialog.Builder(this)
+                        .setTitle("Delete " + noteTale.note.title)
+                        .setMessage("Are you sure you want to delete this note?")
+                        .setIcon(android.R.drawable.ic_delete)
+                        .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                            this.deleteNote(noteTale.note.id);
+                        })
+                        .setNegativeButton(android.R.string.no, null)
+                        .show();
+                return false;
+            });
+
             noteTales.add(noteTale);
         }
     }
