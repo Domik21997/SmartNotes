@@ -73,6 +73,9 @@ public class MainActivity extends AppCompatActivity {
         firstColumn = findViewById(R.id.first_column);
         secondColumn = findViewById(R.id.second_column);
         drawNoteViews();
+
+        //TODO: remove testing code
+        openNoteActivity();
     }
 
     @Override

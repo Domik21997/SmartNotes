@@ -42,10 +42,41 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="5dp"
-            android:textSize="18dp"
             android:textColor="#000000"
+            android:textSize="18dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/note_text_edit_view" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/record_sound_fab_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="16dp"
+            android:backgroundTint="@color/blueAction"
+            android:src="@drawable/ic_mic_white_24dp"
+            app:backgroundTint="@color/blueAction"
+            app:fabSize="mini"
+            app:layout_constraintEnd_toEndOf="@+id/take_photo_fab_button"
+            app:layout_constraintEnd_toStartOf="@+id/take_photo_fab_button"
+            app:layout_constraintTop_toBottomOf="@+id/note_text_edit_view"
+            app:rippleColor="#FF9800" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/take_photo_fab_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:backgroundTint="@color/blueAction"
+            android:src="@drawable/ic_add_a_photo_white_24dp"
+            app:backgroundTint="@color/blueAction"
+            app:fabSize="mini"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/note_text_edit_view"
+            app:rippleColor="#FF9800" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -56,4 +87,5 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         app:srcCompat="@drawable/ic_note_add_white_24dp" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
