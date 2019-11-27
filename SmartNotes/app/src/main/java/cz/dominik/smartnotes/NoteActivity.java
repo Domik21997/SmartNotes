@@ -58,6 +58,9 @@ public class NoteActivity extends AppCompatActivity {
         initializeNoteData();
         bindFabButtonOnClickListener();
         this.storageManager = new StorageManager(getApplicationContext());
+
+        //TODO: remove testing calls
+        this.record(null);
     }
 
     @Override
@@ -79,7 +82,6 @@ public class NoteActivity extends AppCompatActivity {
             notePhotoImageView.setImageBitmap(imageBitmap);
             String fileName = storageManager.saveBitmap(imageBitmap);
             Log.d("behaviorsubject", fileName);
-
         }
     }
 
@@ -235,6 +237,11 @@ public class NoteActivity extends AppCompatActivity {
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
+    }
+
+    public void record(View view) {
+        RecordDialog recordDialog = new RecordDialog();
+        recordDialog.show(getSupportFragmentManager(), "record");
     }
 }
 

@@ -46,4 +46,10 @@ public class StorageManager {
         }
         return fileName;
     }
+
+    public File getFileForRecording() {
+        ContextWrapper cw = new ContextWrapper(context);
+        File directory = cw.getDir(this.RECORDS_FOLDER, Context.MODE_PRIVATE);
+        return new File(directory, generateUUID() + ".3gp");
+    }
 }

@@ -62,6 +62,7 @@
                 android:layout_marginEnd="16dp"
                 android:backgroundTint="@color/blueAction"
                 android:src="@drawable/ic_mic_white_24dp"
+                android:onClick="record"
                 app:backgroundTint="@color/blueAction"
                 app:fabSize="mini"
                 app:layout_constraintEnd_toEndOf="@+id/take_photo_fab_button"
