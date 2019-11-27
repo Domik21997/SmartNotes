@@ -4,11 +4,16 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,20 +31,24 @@ import cz.dominik.smartnotes.models.Constants;
 import cz.dominik.smartnotes.models.Note;
 
 public class NoteActivity extends AppCompatActivity {
-    final Calendar calendar = Calendar.getInstance();
-    Note note;
-    SimpleDateFormat sdfUserFormat = new SimpleDateFormat(Constants.DATE_PATTERN_USER);
-    SimpleDateFormat sdfDatabaseFormat = new SimpleDateFormat(Constants.DATE_PATTERN_DATABASE);
-    Consumer<Integer> setColorObservable;
-    int selectedColor;
+    static final int REQUEST_IMAGE_CAPTURE = 1;
+
+    private StorageManager storageManager;
+    private final Calendar calendar = Calendar.getInstance();
+    private Note note;
+    private SimpleDateFormat sdfUserFormat = new SimpleDateFormat(Constants.DATE_PATTERN_USER);
+    private SimpleDateFormat sdfDatabaseFormat = new SimpleDateFormat(Constants.DATE_PATTERN_DATABASE);
+    private Consumer<Integer> setColorObservable;
+    private int selectedColor;
 
     //views
-    EditText noteTitleEditView;
-    EditText noteTextEditView;
-    ConstraintLayout layout;
-    TextView alertTextView;
-    FloatingActionButton fabButton;
-    MenuItem deleteNoteMenuItem;
+    private EditText noteTitleEditView;
+    private EditText noteTextEditView;
+    private ConstraintLayout layout;
+    private TextView alertTextView;
+    private FloatingActionButton fabButton;
+    private MenuItem deleteNoteMenuItem;
+    private ImageView notePhotoImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +57,7 @@ public class NoteActivity extends AppCompatActivity {
         initializeViews();
         initializeNoteData();
         bindFabButtonOnClickListener();
+        this.storageManager = new StorageManager(getApplicationContext());
     }
 
     @Override
@@ -61,6 +71,17 @@ public class NoteActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            notePhotoImageView.setImageBitmap(imageBitmap);
+            String fileName = storageManager.saveBitmap(imageBitmap);
+            Log.d("behaviorsubject", fileName);
+
+        }
+    }
 
     private void initializeViews() {
         noteTitleEditView = findViewById(R.id.note_title_edit_view);
@@ -68,6 +89,7 @@ public class NoteActivity extends AppCompatActivity {
         layout = findViewById(R.id.create_note_layout);
         alertTextView = findViewById(R.id.alert_text_view);
         fabButton = findViewById(R.id.editing_fab_button);
+        notePhotoImageView = findViewById(R.id.note_photo_image_view);
     }
 
     private void initializeNoteData() {
@@ -76,7 +98,8 @@ public class NoteActivity extends AppCompatActivity {
 
         try {
             note.id = intent.getLongExtra("id", -1);
-            note.createdDate = sdfDatabaseFormat.parse(intent.getStringExtra("createdDate"));
+            if (intent.getStringExtra("createdDate") != null)
+                note.createdDate = sdfDatabaseFormat.parse(intent.getStringExtra("createdDate"));
             String alertDateString = intent.getStringExtra("alertDate");
             note.alertDate = alertDateString != null ? sdfDatabaseFormat.parse(alertDateString) : null;
             note.title = intent.getStringExtra("title");
@@ -206,4 +229,27 @@ public class NoteActivity extends AppCompatActivity {
         setResult(Activity.RESULT_OK, resultIntent);
         finish();
     }
+
+    public void takePhoto(View view) {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
