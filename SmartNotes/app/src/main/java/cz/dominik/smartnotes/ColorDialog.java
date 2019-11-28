@@ -13,13 +13,13 @@ import androidx.fragment.app.DialogFragment;
 
 import java.util.function.Consumer;
 
-public class SetColorDialog extends DialogFragment {
+public class ColorDialog extends DialogFragment {
     Consumer<Integer> colorObserver;
     Consumer<Boolean> confirmConsumer;
 
     LinearLayout layout;
 
-    public SetColorDialog(Consumer<Integer> colorObserver, Consumer<Boolean> confirmConsumer) {
+    public ColorDialog(Consumer<Integer> colorObserver, Consumer<Boolean> confirmConsumer) {
         this.colorObserver = colorObserver;
         this.confirmConsumer = confirmConsumer;
     }

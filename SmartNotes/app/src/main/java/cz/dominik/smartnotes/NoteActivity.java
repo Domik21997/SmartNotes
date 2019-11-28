@@ -10,6 +10,8 @@ import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -35,6 +37,8 @@ import cz.dominik.smartnotes.models.Note;
 
 public class NoteActivity extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
+
+    private boolean noteChanged = false;
 
     private StorageManager storageManager;
     private final Calendar calendar = Calendar.getInstance();
@@ -63,6 +67,8 @@ public class NoteActivity extends AppCompatActivity {
         initializeViews();
         initializeNoteData();
         bindCreateFabButtonOnClickListener();
+        bindOnTextChangedListeners();
+        noteChanged = false;
     }
 
     @Override
@@ -84,7 +90,23 @@ public class NoteActivity extends AppCompatActivity {
             photoImageView.setImageBitmap(imageBitmap);
             String fileName = storageManager.saveBitmap(imageBitmap);
             this.note.photoFileName = fileName;
+            this.noteChanged = true;
             Log.d("behaviorsubject", fileName);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (noteChanged) {
+            ExitWithoutSaveDialog exitWithoutSaveDialog = new ExitWithoutSaveDialog((result) -> {
+                if (result) {
+                    super.onBackPressed();
+                }
+            });
+            exitWithoutSaveDialog.show(getSupportFragmentManager(), "color");
+
+        } else {
+            super.onBackPressed();
         }
     }
 
@@ -164,6 +186,26 @@ public class NoteActivity extends AppCompatActivity {
         );
     }
 
+    private void bindOnTextChangedListeners() {
+        TextWatcher watcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                noteChanged = true;
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        };
+
+        this.titleEditView.addTextChangedListener(watcher);
+        this.textEditView.addTextChangedListener(watcher);
+    }
+
     private void createNote() {
         Intent resultIntent = new Intent();
         resultIntent.putExtra("noteId", note.id);
@@ -230,6 +272,7 @@ public class NoteActivity extends AppCompatActivity {
             return;
         }
 
+        noteChanged = true;
         note.alertDate = date;
         updateAlertTextLabel(date);
     }
@@ -240,14 +283,15 @@ public class NoteActivity extends AppCompatActivity {
     }
 
     private void setBackgroundColor(int value) {
+        noteChanged = true;
         selectedColor = value;
         layout.setBackgroundColor(value);
     }
 
     //menu onclick listeners
-    public void setColorDialog(MenuItem item) {
-        SetColorDialog setColorDialog = new SetColorDialog(colorObserver, (value) -> confirmSelection(value));
-        setColorDialog.show(getSupportFragmentManager(), "color");
+    public void openColorDialog(MenuItem item) {
+        ColorDialog colorDialog = new ColorDialog(colorObserver, (value) -> confirmSelection(value));
+        colorDialog.show(getSupportFragmentManager(), "color");
     }
 
     public void setAlertDialog(MenuItem item) {
@@ -286,6 +330,7 @@ public class NoteActivity extends AppCompatActivity {
     @SuppressLint("RestrictedApi")
     private void setRecordFile(String recordFileName) {
         playRecordFabButton.setVisibility(View.VISIBLE);
+        this.noteChanged = true;
         this.note.recordFileName = recordFileName;
         Log.d("behaviorsubject", recordFileName);
     }
