@@ -2,6 +2,8 @@ package cz.dominik.smartnotes;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.widget.LinearLayout;
 
@@ -20,17 +22,19 @@ import cz.dominik.smartnotes.models.IDatabase;
 import cz.dominik.smartnotes.models.Note;
 
 public class MainActivity extends AppCompatActivity {
-    IDatabase database;
-    SimpleDateFormat sdfDatabaseFormat = new SimpleDateFormat(Constants.DATE_PATTERN_DATABASE);
+    private IDatabase database;
+    private SimpleDateFormat sdfDatabaseFormat = new SimpleDateFormat(Constants.DATE_PATTERN_DATABASE);
+    private StorageManager storageManager;
 
-    ArrayList<Note> notes = new ArrayList<>();
-    ArrayList<NoteTale> noteTales = new ArrayList<>();
+    private ArrayList<Note> notes = new ArrayList<>();
+    private ArrayList<NoteTale> noteTales = new ArrayList<>();
 
-    LinearLayout firstColumn, secondColumn;
+    private LinearLayout firstColumn, secondColumn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.storageManager = new StorageManager(getApplicationContext());
         database = new LocalDatabase(this, "smartnotes");
         notes = database.getAllNotes();
 
@@ -135,7 +139,17 @@ public class MainActivity extends AppCompatActivity {
         }
 
         for (int i = 0; i < notes.size(); i++) {
-            NoteTale noteTale = new NoteTale(this, notes.get(i));
+            Note note = notes.get(i);
+            Bitmap notePhotoBitmap = null;
+
+            if (note.photoFileName != null) {
+                String photoFilePath = storageManager.getPhotoFileByName(note.photoFileName).getAbsolutePath();
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+                notePhotoBitmap = BitmapFactory.decodeFile(photoFilePath, options);
+            }
+
+            NoteTale noteTale = new NoteTale(this, note, notePhotoBitmap);
             columns[i % 2].addView(noteTale.view);
             final Intent intent = new Intent(this, NoteActivity.class);
             //on click listener

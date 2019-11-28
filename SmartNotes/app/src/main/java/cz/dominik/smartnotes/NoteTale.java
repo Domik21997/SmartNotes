@@ -1,11 +1,10 @@
 package cz.dominik.smartnotes;
 
 import android.content.Context;
-import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -17,16 +16,19 @@ import cz.dominik.smartnotes.models.Note;
 public class NoteTale {
     Context context;
     Note note;
+    Bitmap notePhotoBitmap;
     SimpleDateFormat sdfDatabaseFormat = new SimpleDateFormat(Constants.DATE_PATTERN_DATABASE);
 
     //views
     View view;
     TextView noteTitleTextView;
     TextView noteTextTextView;
+    ImageView photoPreviewImageView;
 
-    public NoteTale(Context context, Note note) {
+    public NoteTale(Context context, Note note, Bitmap notePhotoBitmap) {
         this.context = context;
         this.note = note;
+        this.notePhotoBitmap = notePhotoBitmap;
         initializeLayout(context);
         initializeViews();
         setNoteValues();
@@ -43,6 +45,7 @@ public class NoteTale {
     private void initializeViews() {
         noteTitleTextView = view.findViewById(R.id.note_title_text_view);
         noteTextTextView = view.findViewById(R.id.note_text_text_view);
+        photoPreviewImageView = view.findViewById(R.id.photo_preview_image_view);
     }
 
     private LinearLayout.LayoutParams setUpParams() {
@@ -61,6 +64,11 @@ public class NoteTale {
     private void setNoteValues() {
         noteTitleTextView.setText(note.title);
         noteTextTextView.setText(note.text);
+
+        if (notePhotoBitmap != null) {
+            photoPreviewImageView.setImageBitmap(notePhotoBitmap);
+            photoPreviewImageView.setVisibility(View.VISIBLE);
+        }
     }
 
 }
