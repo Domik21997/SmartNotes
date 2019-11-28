@@ -10,8 +10,6 @@ creating notifications. The first way will be by selecting a specific date and s
 
 > SQLite
 
-> GPS
-
 > Push Up Notifications
 
 > Voice recording
