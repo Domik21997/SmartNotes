@@ -6,6 +6,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -45,13 +46,13 @@ public class NoteActivity extends AppCompatActivity {
     private Consumer<String> recordObserver;
 
     //views
-    private EditText noteTitleEditView;
-    private EditText noteTextEditView;
+    private EditText titleEditView;
+    private EditText textEditView;
     private ConstraintLayout layout;
     private TextView alertTextView;
     private FloatingActionButton fabButton;
     private MenuItem deleteNoteMenuItem;
-    private ImageView notePhotoImageView;
+    private ImageView photoImageView;
     private FloatingActionButton playRecordFabButton;
 
     @Override
@@ -83,19 +84,20 @@ public class NoteActivity extends AppCompatActivity {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
-            notePhotoImageView.setImageBitmap(imageBitmap);
+            photoImageView.setImageBitmap(imageBitmap);
             String fileName = storageManager.saveBitmap(imageBitmap);
+            this.note.photoFileName = fileName;
             Log.d("behaviorsubject", fileName);
         }
     }
 
     private void initializeViews() {
-        noteTitleEditView = findViewById(R.id.note_title_edit_view);
-        noteTextEditView = findViewById(R.id.note_text_edit_view);
+        titleEditView = findViewById(R.id.note_title_edit_view);
+        textEditView = findViewById(R.id.note_text_edit_view);
         layout = findViewById(R.id.create_note_layout);
         alertTextView = findViewById(R.id.alert_text_view);
         fabButton = findViewById(R.id.editing_fab_button);
-        notePhotoImageView = findViewById(R.id.note_photo_image_view);
+        photoImageView = findViewById(R.id.note_photo_image_view);
         playRecordFabButton = findViewById(R.id.play_record_sound_fab_button);
     }
 
@@ -129,16 +131,16 @@ public class NoteActivity extends AppCompatActivity {
     }
 
     private void bindViewsData(Note note) {
-        noteTitleEditView.setText(note.title);
-        noteTextEditView.setText(note.text);
+        titleEditView.setText(note.title);
+        textEditView.setText(note.text);
         if (note.alertDate != null)
             updateAlertTextLabel(note.alertDate);
     }
 
     private void bindFabButtonOnClickListener() {
         fabButton.setOnClickListener(view -> {
-                    String noteTitle = noteTitleEditView.getText().toString();
-                    String noteText = noteTextEditView.getText().toString();
+                    String noteTitle = titleEditView.getText().toString();
+                    String noteText = textEditView.getText().toString();
 
                     if (noteTitle.isEmpty() && noteText.isEmpty()) {
                         Snackbar.make(view, "Note is empty.", Snackbar.LENGTH_LONG).setAction("Action", null).show();
@@ -258,9 +260,20 @@ public class NoteActivity extends AppCompatActivity {
         recordDialog.show(getSupportFragmentManager(), "openRecordDialog");
     }
 
+    public void loadPhoto() {
+        String photoFilePath = storageManager.getPhotoFileByName(note.photoFileName).getAbsolutePath();
+        Log.d("behaviorsubject", photoFilePath);
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        Bitmap bitmap = BitmapFactory.decodeFile(photoFilePath, options);
+        photoImageView.setImageBitmap(bitmap);
+    }
+
     public void playRecord(View view) {
         String recordFilePath = storageManager.getRecordFileByName(this.note.recordFileName).getAbsolutePath();
         Log.d("behaviorsubject", recordFilePath);
+
         MediaPlayer mPlayer = new MediaPlayer();
         try {
             mPlayer.setDataSource(recordFilePath);

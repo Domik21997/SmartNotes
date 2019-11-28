@@ -47,7 +47,7 @@ public class StorageManager {
         return fileName;
     }
 
-    public File getFileForRecording() {
+    public File createFileForRecord() {
         ContextWrapper cw = new ContextWrapper(context);
         File directory = cw.getDir(this.RECORDS_FOLDER, Context.MODE_PRIVATE);
         return new File(directory, generateUUID() + ".3gp");
@@ -56,6 +56,12 @@ public class StorageManager {
     public File getRecordFileByName(String name) {
         ContextWrapper cw = new ContextWrapper(context);
         File directory = cw.getDir(this.RECORDS_FOLDER, Context.MODE_PRIVATE);
+        return new File(directory, name);
+    }
+
+    public File getPhotoFileByName(String name) {
+        ContextWrapper cw = new ContextWrapper(context);
+        File directory = cw.getDir(this.PHOTOS_FOLDER, Context.MODE_PRIVATE);
         return new File(directory, name);
     }
 }

@@ -78,7 +78,7 @@ public class RecordDialog extends DialogFragment {
     }
 
     private void startRecording() {
-        recordFile = storageManager.getFileForRecording();
+        recordFile = storageManager.createFileForRecord();
         recorder = new MediaRecorder();
         recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
