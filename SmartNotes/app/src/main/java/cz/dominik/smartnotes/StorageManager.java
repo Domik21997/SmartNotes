@@ -52,4 +52,10 @@ public class StorageManager {
         File directory = cw.getDir(this.RECORDS_FOLDER, Context.MODE_PRIVATE);
         return new File(directory, generateUUID() + ".3gp");
     }
+
+    public File getRecordFileByName(String name) {
+        ContextWrapper cw = new ContextWrapper(context);
+        File directory = cw.getDir(this.RECORDS_FOLDER, Context.MODE_PRIVATE);
+        return new File(directory, name);
+    }
 }

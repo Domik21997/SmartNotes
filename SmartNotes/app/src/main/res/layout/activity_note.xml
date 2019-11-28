@@ -47,11 +47,29 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="15dp"
                 android:textColor="#000000"
                 android:textSize="18dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/note_text_edit_view" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/play_record_sound_fab_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="18dp"
+                android:backgroundTint="@color/blueAction"
+                android:onClick="playRecord"
+                android:src="@drawable/ic_play_arrow_white_24dp"
+                android:visibility="invisible"
+                app:backgroundTint="@color/blueAction"
+                app:fabSize="mini"
+                app:layout_constraintEnd_toEndOf="@+id/record_sound_fab_button"
+                app:layout_constraintEnd_toStartOf="@+id/record_sound_fab_button"
+                app:layout_constraintTop_toBottomOf="@+id/note_text_edit_view"
+                app:rippleColor="#FF9800" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/record_sound_fab_button"
@@ -59,10 +77,10 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|end"
                 android:layout_marginTop="10dp"
-                android:layout_marginEnd="16dp"
+                android:layout_marginEnd="18dp"
                 android:backgroundTint="@color/blueAction"
+                android:onClick="openRecordDialog"
                 android:src="@drawable/ic_mic_white_24dp"
-                android:onClick="record"
                 app:backgroundTint="@color/blueAction"
                 app:fabSize="mini"
                 app:layout_constraintEnd_toEndOf="@+id/take_photo_fab_button"
@@ -76,7 +94,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|end"
                 android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
+                android:layout_marginEnd="18dp"
                 android:backgroundTint="@color/blueAction"
                 android:onClick="takePhoto"
                 android:src="@drawable/ic_add_a_photo_white_24dp"
@@ -84,9 +102,7 @@
                 app:fabSize="mini"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/note_text_edit_view"
-
                 app:rippleColor="#FF9800" />
-
 
             <ImageView
                 android:id="@+id/note_photo_image_view"

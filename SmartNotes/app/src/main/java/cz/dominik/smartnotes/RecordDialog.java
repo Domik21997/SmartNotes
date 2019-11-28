@@ -18,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.DialogFragment;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.function.Consumer;
 
@@ -25,7 +26,7 @@ public class RecordDialog extends DialogFragment {
     private LinearLayout layout;
     private Button recordButton;
 
-    private String recordFileName;
+    private File recordFile;
 
     private MediaRecorder recorder;
     private boolean permissionToRecordAccepted = false;
@@ -77,12 +78,11 @@ public class RecordDialog extends DialogFragment {
     }
 
     private void startRecording() {
-        recordFileName = storageManager.getFileForRecording().getAbsolutePath();
-
+        recordFile = storageManager.getFileForRecording();
         recorder = new MediaRecorder();
         recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        recorder.setOutputFile(recordFileName);
+        recorder.setOutputFile(recordFile.getAbsolutePath());
         recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 
         try {
@@ -101,7 +101,7 @@ public class RecordDialog extends DialogFragment {
     }
 
     private void returnRecord() {
-        recordObserver.accept(this.recordFileName);
+        recordObserver.accept(recordFile.getName());
         dismiss();
     }
 }

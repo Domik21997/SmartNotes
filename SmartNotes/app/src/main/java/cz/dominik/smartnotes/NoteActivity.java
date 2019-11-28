@@ -1,10 +1,12 @@
 package cz.dominik.smartnotes;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -38,9 +40,8 @@ public class NoteActivity extends AppCompatActivity {
     private Note note;
     private SimpleDateFormat sdfUserFormat = new SimpleDateFormat(Constants.DATE_PATTERN_USER);
     private SimpleDateFormat sdfDatabaseFormat = new SimpleDateFormat(Constants.DATE_PATTERN_DATABASE);
-    private Consumer<Integer> colorObserver;
     private int selectedColor;
-
+    private Consumer<Integer> colorObserver;
     private Consumer<String> recordObserver;
 
     //views
@@ -51,6 +52,7 @@ public class NoteActivity extends AppCompatActivity {
     private FloatingActionButton fabButton;
     private MenuItem deleteNoteMenuItem;
     private ImageView notePhotoImageView;
+    private FloatingActionButton playRecordFabButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +64,7 @@ public class NoteActivity extends AppCompatActivity {
         this.storageManager = new StorageManager(getApplicationContext());
 
         //TODO: remove testing calls
-        this.record(null);
+        this.openRecordDialog(null);
     }
 
     @Override
@@ -94,6 +96,7 @@ public class NoteActivity extends AppCompatActivity {
         alertTextView = findViewById(R.id.alert_text_view);
         fabButton = findViewById(R.id.editing_fab_button);
         notePhotoImageView = findViewById(R.id.note_photo_image_view);
+        playRecordFabButton = findViewById(R.id.play_record_sound_fab_button);
     }
 
     private void initializeNoteData() {
@@ -219,8 +222,11 @@ public class NoteActivity extends AppCompatActivity {
         layout.setBackgroundColor(value);
     }
 
-    private void setRecordFile(String recordPath) {
-        Log.d("behaviorsubject", recordPath);
+    @SuppressLint("RestrictedApi")
+    private void setRecordFile(String recordFileName) {
+        playRecordFabButton.setVisibility(View.VISIBLE);
+        this.note.recordFileName = recordFileName;
+        Log.d("behaviorsubject", recordFileName);
     }
 
     //menu onclick listeners
@@ -247,9 +253,24 @@ public class NoteActivity extends AppCompatActivity {
         }
     }
 
-    public void record(View view) {
+    public void openRecordDialog(View view) {
         RecordDialog recordDialog = new RecordDialog(storageManager, recordObserver);
-        recordDialog.show(getSupportFragmentManager(), "record");
+        recordDialog.show(getSupportFragmentManager(), "openRecordDialog");
+    }
+
+    public void playRecord(View view) {
+        String recordFilePath = storageManager.getRecordFileByName(this.note.recordFileName).getAbsolutePath();
+        Log.d("behaviorsubject", recordFilePath);
+        MediaPlayer mPlayer = new MediaPlayer();
+        try {
+            mPlayer.setDataSource(recordFilePath);
+            mPlayer.prepare();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        mPlayer.start();
     }
 }
 
