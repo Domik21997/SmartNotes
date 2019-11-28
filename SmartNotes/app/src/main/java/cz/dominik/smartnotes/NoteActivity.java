@@ -224,13 +224,6 @@ public class NoteActivity extends AppCompatActivity {
         layout.setBackgroundColor(value);
     }
 
-    @SuppressLint("RestrictedApi")
-    private void setRecordFile(String recordFileName) {
-        playRecordFabButton.setVisibility(View.VISIBLE);
-        this.note.recordFileName = recordFileName;
-        Log.d("behaviorsubject", recordFileName);
-    }
-
     //menu onclick listeners
     public void setColorDialog(MenuItem item) {
         SetColorDialog setColorDialog = new SetColorDialog(colorObserver, (value) -> confirmSelection(value));
@@ -260,14 +253,21 @@ public class NoteActivity extends AppCompatActivity {
         recordDialog.show(getSupportFragmentManager(), "openRecordDialog");
     }
 
-    public void loadPhoto() {
-        String photoFilePath = storageManager.getPhotoFileByName(note.photoFileName).getAbsolutePath();
+    public void loadPhoto(String photoFileName) {
+        String photoFilePath = storageManager.getPhotoFileByName(photoFileName).getAbsolutePath();
         Log.d("behaviorsubject", photoFilePath);
 
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
         Bitmap bitmap = BitmapFactory.decodeFile(photoFilePath, options);
         photoImageView.setImageBitmap(bitmap);
+    }
+
+    @SuppressLint("RestrictedApi")
+    private void setRecordFile(String recordFileName) {
+        playRecordFabButton.setVisibility(View.VISIBLE);
+        this.note.recordFileName = recordFileName;
+        Log.d("behaviorsubject", recordFileName);
     }
 
     public void playRecord(View view) {
