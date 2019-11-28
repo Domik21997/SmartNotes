@@ -64,4 +64,24 @@ public class StorageManager {
         File directory = cw.getDir(this.PHOTOS_FOLDER, Context.MODE_PRIVATE);
         return new File(directory, name);
     }
+
+    public void deletePhoto(String name) {
+        ContextWrapper cw = new ContextWrapper(context);
+        File directory = cw.getDir(this.PHOTOS_FOLDER, Context.MODE_PRIVATE);
+        try {
+            new File(directory, name).delete();
+        } catch (Exception e) {
+            //whatever..
+        }
+    }
+
+    public void deleteRecord(String name) {
+        ContextWrapper cw = new ContextWrapper(context);
+        File directory = cw.getDir(this.RECORDS_FOLDER, Context.MODE_PRIVATE);
+        try {
+            new File(directory, name).delete();
+        } catch (Exception e) {
+            //whatever..
+        }
+    }
 }

@@ -89,6 +89,9 @@ public class NoteActivity extends AppCompatActivity {
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             photoImageView.setImageBitmap(imageBitmap);
             String fileName = storageManager.saveBitmap(imageBitmap);
+            if (this.note.photoFileName != null) {
+                this.storageManager.deletePhoto(this.note.photoFileName);
+            }
             this.note.photoFileName = fileName;
             this.noteChanged = true;
             Log.d("behaviorsubject", fileName);
@@ -329,6 +332,10 @@ public class NoteActivity extends AppCompatActivity {
 
     @SuppressLint("RestrictedApi")
     private void setRecordFile(String recordFileName) {
+        if (this.note.recordFileName != null) {
+            storageManager.deleteRecord(this.note.recordFileName);
+        }
+
         playRecordFabButton.setVisibility(View.VISIBLE);
         this.noteChanged = true;
         this.note.recordFileName = recordFileName;
