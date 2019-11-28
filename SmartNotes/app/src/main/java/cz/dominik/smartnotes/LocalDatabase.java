@@ -29,7 +29,7 @@ public class LocalDatabase implements IDatabase {
 
     private void initializeDatabase() {
         SQLiteDatabase db = context.openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null);
-        db.execSQL("CREATE TABLE IF NOT EXISTS " + NOTE_TABLE + "(title TEXT, text TEXT, createdDate TEXT, alertDate TEXT, color INT);");
+        db.execSQL("CREATE TABLE IF NOT EXISTS " + NOTE_TABLE + "(title TEXT, text TEXT, createdDate TEXT, alertDate TEXT, color INT, photoFileName TEXT, recordFileName TEXT);");
         db.close();
     }
 
@@ -41,6 +41,8 @@ public class LocalDatabase implements IDatabase {
         note.id = cursor.getLong(cursor.getColumnIndex("_id"));
         note.title = cursor.getString(cursor.getColumnIndex("title"));
         note.text = cursor.getString(cursor.getColumnIndex("text"));
+        note.photoFileName = cursor.getString(cursor.getColumnIndex("photoFileName"));
+        note.recordFileName = cursor.getString(cursor.getColumnIndex("recordFileName"));
         try {
             String createdDateString = cursor.getString(cursor.getColumnIndex("createdDate"));
             if (createdDateString != null) {
@@ -74,6 +76,8 @@ public class LocalDatabase implements IDatabase {
             note.id = cursor.getLong(cursor.getColumnIndex("_id"));
             note.title = cursor.getString(cursor.getColumnIndex("title"));
             note.text = cursor.getString(cursor.getColumnIndex("text"));
+            note.photoFileName = cursor.getString(cursor.getColumnIndex("photoFileName"));
+            note.recordFileName = cursor.getString(cursor.getColumnIndex("recordFileName"));
             try {
                 String createdDateString = cursor.getString(cursor.getColumnIndex("createdDate"));
                 if (createdDateString != null) {
@@ -108,6 +112,9 @@ public class LocalDatabase implements IDatabase {
         contentValues.put("createdDate", note.createdDate != null ? sdf.format(note.createdDate) : sdf.format(Calendar.getInstance().getTime()));
         contentValues.put("alertDate", note.alertDate != null ? sdf.format(note.alertDate) : null);
         contentValues.put("color", note.color);
+        contentValues.put("photoFileName", note.photoFileName);
+        contentValues.put("recordFileName", note.recordFileName);
+
         long newNoteId = db.insert(NOTE_TABLE, null, contentValues);
         db.close();
 
@@ -122,6 +129,8 @@ public class LocalDatabase implements IDatabase {
         contentValues.put("createdDate", note.createdDate != null ? sdf.format(note.createdDate) : sdf.format(Calendar.getInstance().getTime()));
         contentValues.put("alertDate", note.alertDate != null ? sdf.format(note.alertDate) : null);
         contentValues.put("color", note.color);
+        contentValues.put("photoFileName", note.photoFileName);
+        contentValues.put("recordFileName", note.recordFileName);
         db.update(NOTE_TABLE, contentValues, "rowid=" + note.id, null);
         db.close();
     }

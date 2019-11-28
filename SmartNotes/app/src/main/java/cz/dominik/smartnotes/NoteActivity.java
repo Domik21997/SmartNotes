@@ -58,14 +58,11 @@ public class NoteActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.storageManager = new StorageManager(getApplicationContext());
         setContentView(R.layout.activity_note);
         initializeViews();
         initializeNoteData();
-        bindFabButtonOnClickListener();
-        this.storageManager = new StorageManager(getApplicationContext());
-
-        //TODO: remove testing calls
-        this.openRecordDialog(null);
+        bindCreateFabButtonOnClickListener();
     }
 
     @Override
@@ -114,9 +111,24 @@ public class NoteActivity extends AppCompatActivity {
             note.title = intent.getStringExtra("title");
             note.text = intent.getStringExtra("text");
             note.color = intent.getIntExtra("color", 0);
+            note.photoFileName = intent.getStringExtra("photoFileName");
+            note.recordFileName = intent.getStringExtra("recordFileName");
             selectedColor = note.color;
             bindViewsData(note);
-            fabButton.setImageResource(R.drawable.ic_edit_white_24dp);
+
+            if (note.photoFileName != null)
+                loadPhoto(note.photoFileName);
+
+            if (note.recordFileName != null)
+                setRecordFile(note.recordFileName);
+
+            if (note.id != -1)
+                fabButton.setImageResource(R.drawable.ic_edit_white_24dp);
+
+            if (note.color == 0) {
+                selectedColor = getColor(R.color.noteGrey);
+                note.color = selectedColor;
+            }
         } catch (Exception e) {
             e.printStackTrace();
             //create new note_tale
@@ -137,7 +149,7 @@ public class NoteActivity extends AppCompatActivity {
             updateAlertTextLabel(note.alertDate);
     }
 
-    private void bindFabButtonOnClickListener() {
+    private void bindCreateFabButtonOnClickListener() {
         fabButton.setOnClickListener(view -> {
                     String noteTitle = titleEditView.getText().toString();
                     String noteText = textEditView.getText().toString();
@@ -147,20 +159,28 @@ public class NoteActivity extends AppCompatActivity {
                         return;
                     }
 
-                    Intent resultIntent = new Intent();
-                    resultIntent.putExtra("noteId", note.id);
-                    resultIntent.putExtra("noteTitle", noteTitle);
-                    resultIntent.putExtra("noteText", noteText);
-                    String alertDateString = null;
-                    if (note.alertDate != null) {
-                        alertDateString = sdfDatabaseFormat.format(note.alertDate);
-                    }
-                    resultIntent.putExtra("alertDate", alertDateString);
-                    resultIntent.putExtra("color", note.color);
-                    setResult(Activity.RESULT_OK, resultIntent);
-                    finish();
+                    createNote();
                 }
         );
+    }
+
+    private void createNote() {
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra("noteId", note.id);
+        resultIntent.putExtra("noteTitle", titleEditView.getText().toString());
+        resultIntent.putExtra("noteText", textEditView.getText().toString());
+        resultIntent.putExtra("color", note.color);
+        resultIntent.putExtra("photoFileName", note.photoFileName);
+        resultIntent.putExtra("recordFileName", note.recordFileName);
+
+        String alertDateString = null;
+        if (note.alertDate != null) {
+            alertDateString = sdfDatabaseFormat.format(note.alertDate);
+        }
+        resultIntent.putExtra("alertDate", alertDateString);
+
+        setResult(Activity.RESULT_OK, resultIntent);
+        finish();
     }
 
     private void confirmSelection(boolean value) {
@@ -278,8 +298,6 @@ public class NoteActivity extends AppCompatActivity {
         try {
             mPlayer.setDataSource(recordFilePath);
             mPlayer.prepare();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }

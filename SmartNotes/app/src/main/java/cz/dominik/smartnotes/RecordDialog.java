@@ -30,7 +30,7 @@ public class RecordDialog extends DialogFragment {
 
     private MediaRecorder recorder;
     private boolean permissionToRecordAccepted = false;
-    private String [] permissions = {Manifest.permission.RECORD_AUDIO};
+    private String[] permissions = {Manifest.permission.RECORD_AUDIO};
 
     private StorageManager storageManager;
     private Consumer<String> recordObserver;
@@ -52,11 +52,9 @@ public class RecordDialog extends DialogFragment {
         recordButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if(event.getAction() == MotionEvent.ACTION_DOWN) {
-                    //Log.d("behaviorsubject", "down");
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     startRecording();
-                } else if(event.getAction() == MotionEvent.ACTION_UP) {
-                    //Log.d("behaviorsubject", "up");
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     stopRecording();
                     returnRecord();
                 }
@@ -73,8 +71,8 @@ public class RecordDialog extends DialogFragment {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        permissionToRecordAccepted  = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-        if (!permissionToRecordAccepted ) dismiss();
+        permissionToRecordAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+        if (!permissionToRecordAccepted) dismiss();
     }
 
     private void startRecording() {
