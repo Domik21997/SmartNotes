@@ -19,21 +19,24 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.DialogFragment;
 
 import java.io.IOException;
-
-import cz.dominik.smartnotes.R;
+import java.util.function.Consumer;
 
 public class RecordDialog extends DialogFragment {
     private LinearLayout layout;
     private Button recordButton;
 
+    private String recordFileName;
+
     private MediaRecorder recorder;
     private boolean permissionToRecordAccepted = false;
     private String [] permissions = {Manifest.permission.RECORD_AUDIO};
 
-    StorageManager storageManager = new StorageManager(getContext());
+    private StorageManager storageManager;
+    private Consumer<String> recordObserver;
 
-    public RecordDialog() {
-
+    public RecordDialog(StorageManager storageManager, Consumer<String> recordObserver) {
+        this.storageManager = storageManager;
+        this.recordObserver = recordObserver;
     }
 
     @NonNull
@@ -49,11 +52,12 @@ public class RecordDialog extends DialogFragment {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if(event.getAction() == MotionEvent.ACTION_DOWN) {
-                    Log.d("behaviorsubject", "down");
+                    //Log.d("behaviorsubject", "down");
                     startRecording();
                 } else if(event.getAction() == MotionEvent.ACTION_UP) {
-                    Log.d("behaviorsubject", "up");
+                    //Log.d("behaviorsubject", "up");
                     stopRecording();
+                    returnRecord();
                 }
 
                 return false;
@@ -73,10 +77,12 @@ public class RecordDialog extends DialogFragment {
     }
 
     private void startRecording() {
+        recordFileName = storageManager.getFileForRecording().getAbsolutePath();
+
         recorder = new MediaRecorder();
         recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        //recorder.setOutputFile(fileName);
+        recorder.setOutputFile(recordFileName);
         recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 
         try {
@@ -92,5 +98,10 @@ public class RecordDialog extends DialogFragment {
         recorder.stop();
         recorder.release();
         recorder = null;
+    }
+
+    private void returnRecord() {
+        recordObserver.accept(this.recordFileName);
+        dismiss();
     }
 }

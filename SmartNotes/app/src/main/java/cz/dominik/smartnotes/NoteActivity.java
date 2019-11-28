@@ -38,8 +38,10 @@ public class NoteActivity extends AppCompatActivity {
     private Note note;
     private SimpleDateFormat sdfUserFormat = new SimpleDateFormat(Constants.DATE_PATTERN_USER);
     private SimpleDateFormat sdfDatabaseFormat = new SimpleDateFormat(Constants.DATE_PATTERN_DATABASE);
-    private Consumer<Integer> setColorObservable;
+    private Consumer<Integer> colorObserver;
     private int selectedColor;
+
+    private Consumer<String> recordObserver;
 
     //views
     private EditText noteTitleEditView;
@@ -117,8 +119,10 @@ public class NoteActivity extends AppCompatActivity {
             note.color = selectedColor;
         }
 
-        setColorObservable = (value) -> setBackgroundColor(value);
+        colorObserver = (value) -> setBackgroundColor(value);
         setBackgroundColor(selectedColor);
+
+        recordObserver = (value) -> setRecordFile(value);
     }
 
     private void bindViewsData(Note note) {
@@ -215,9 +219,13 @@ public class NoteActivity extends AppCompatActivity {
         layout.setBackgroundColor(value);
     }
 
+    private void setRecordFile(String recordPath) {
+        Log.d("behaviorsubject", recordPath);
+    }
+
     //menu onclick listeners
     public void setColorDialog(MenuItem item) {
-        SetColorDialog setColorDialog = new SetColorDialog(setColorObservable, (value) -> confirmSelection(value));
+        SetColorDialog setColorDialog = new SetColorDialog(colorObserver, (value) -> confirmSelection(value));
         setColorDialog.show(getSupportFragmentManager(), "color");
     }
 
@@ -240,7 +248,7 @@ public class NoteActivity extends AppCompatActivity {
     }
 
     public void record(View view) {
-        RecordDialog recordDialog = new RecordDialog();
+        RecordDialog recordDialog = new RecordDialog(storageManager, recordObserver);
         recordDialog.show(getSupportFragmentManager(), "record");
     }
 }
