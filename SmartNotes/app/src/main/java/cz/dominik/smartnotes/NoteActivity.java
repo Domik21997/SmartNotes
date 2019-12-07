@@ -2,8 +2,11 @@ package cz.dominik.smartnotes;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -275,6 +278,7 @@ public class NoteActivity extends AppCompatActivity {
             return;
         }
 
+        date.setSeconds(0);
         noteChanged = true;
         note.alertDate = date;
         updateAlertTextLabel(date);

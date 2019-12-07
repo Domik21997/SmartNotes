@@ -1,9 +1,15 @@
 package cz.dominik.smartnotes;
 
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.LinearLayout;
 
@@ -15,6 +21,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import cz.dominik.smartnotes.models.Constants;
@@ -49,8 +56,8 @@ public class MainActivity extends AppCompatActivity {
         secondColumn = findViewById(R.id.second_column);
         drawNoteViews();
 
-        //TODO: remove testing code
-        //openNoteActivity();
+        createNotificationChannel();
+        //testNotification();
     }
 
     @Override
@@ -86,12 +93,37 @@ public class MainActivity extends AppCompatActivity {
                     note.color = data.getIntExtra("color", R.color.noteGrey);
                     note.photoFileName = data.getStringExtra("photoFileName");
                     note.recordFileName = data.getStringExtra("recordFileName");
+
+                    Note oldNote = database.getById(note.id);
+                    if (oldNote.alertDate == null && alertDateString != null) {
+                        setAlarm(note);
+                    } else if (alertDateString != null && !sdfDatabaseFormat.format(oldNote.alertDate).equals(alertDateString)) {
+                        setAlarm(note);
+                    }
+
                     updateNote(note);
                 }
             }
         } catch (Exception e) {
 
         }
+    }
+
+    private void setAlarm(Note note) {
+        Intent alarmIntent = new Intent(this, AlarmReceiver.class);
+        alarmIntent.putExtra("noteId", note.id);
+        alarmIntent.putExtra("alertDate", sdfDatabaseFormat.format(note.alertDate));
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, new Random().nextInt(), alarmIntent, 0);
+        AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.add(Calendar.SECOND, 4);
+
+        calendar.getTimeInMillis();
+
+
+        manager.set(AlarmManager.RTC_WAKEUP, note.alertDate.getTime(), pendingIntent);
     }
 
     protected void openNoteActivity() {
@@ -101,6 +133,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void addNote(Note note) {
         Note newNote = database.insertNote(note);
+        if (newNote.alertDate != null) {
+            setAlarm(newNote);
+        }
         notes.add(newNote);
         drawNoteViews();
     }
@@ -182,5 +217,26 @@ public class MainActivity extends AppCompatActivity {
 
             noteTales.add(noteTale);
         }
+    }
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("alerts", "Alerts", importance);
+            channel.setDescription("Note alerts");
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+    private void testNotification() {
+        Note testNote = database.getById(1);
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.SECOND, 2);
+        testNote.alertDate = c.getTime();
+        updateNote(testNote);
+        setAlarm(testNote);
     }
 }
