@@ -148,7 +148,7 @@ public class NoteActivity extends AppCompatActivity {
                 loadPhoto(note.photoFileName);
 
             if (note.recordFileName != null)
-                setRecordFile(note.recordFileName);
+                setRecordFile(note.recordFileName, false);
 
             if (note.id != -1)
                 fabButton.setImageResource(R.drawable.ic_edit_white_24dp);
@@ -167,7 +167,7 @@ public class NoteActivity extends AppCompatActivity {
         colorObserver = (value) -> setBackgroundColor(value);
         setBackgroundColor(selectedColor);
 
-        recordObserver = (value) -> setRecordFile(value);
+        recordObserver = (value) -> setRecordFile(value, true);
     }
 
     private void bindViewsData(Note note) {
@@ -335,8 +335,8 @@ public class NoteActivity extends AppCompatActivity {
     }
 
     @SuppressLint("RestrictedApi")
-    private void setRecordFile(String recordFileName) {
-        if (this.note.recordFileName != null) {
+    private void setRecordFile(String recordFileName, boolean delete) {
+        if (this.note.recordFileName != null && delete) {
             storageManager.deleteRecord(this.note.recordFileName);
         }
 
